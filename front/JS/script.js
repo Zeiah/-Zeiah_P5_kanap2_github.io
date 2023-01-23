@@ -87,6 +87,9 @@ fetch(url)
                     article.appendChild(image);
                     image.src=data[i].imageUrl;
 
+                    // alt
+                    
+
                     let titre = document.createElement("h3");
                     article.appendChild(titre);
                     titre.className = "productName";

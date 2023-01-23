@@ -26,11 +26,12 @@ fetch(urlProduct)
                 document.querySelector('#price').textContent=data.price;
                 document.querySelector('#description').textContent=data.description;
                 
-                //pour les trois valeurs couleur dans tableau colors
+                //pour les valeurs couleur dans tableau colors
                 let couleur=document.querySelector('#colors');
                 for (let i=0; i<data.colors.length; i++){
                     couleur.innerHTML+=`<option value="${data.colors[i]}">${data.colors[i]}</option>`;       
-                }   // reprendre
+                }   // reprendre : celui qui est entre les deux balises est ce que voit l'utilisateur
+                    // nous, on récupère la 1ere
                 console.log(data)
 
                 //nommer la page avec le nom du produit
@@ -82,16 +83,20 @@ fetch(urlProduct)
     function selectionner(selectionItem) {
         if (selectionItem.quantiteKey ===0 || selectionItem.couleurKey ==="") {
             alert("Veuillez choisir une couleur et un nombre d'articles");
-            //console.log("quantité ou couleur non spécifiée");
+            console.log("quantité :", selectionItem.quantiteKey);
+            console.log("couleur non spécifiée", selectionItem.couleurKey)
+            console.log("1");
         }
         else {
+            console.log("2")
             let monPanier=JSON.parse(localStorage.getItem('monPanier')); 
-            // récupérer ce qui a déjà été sélectionné dans le panier (localStorage) - le tableau monPanier                
+            // récupérer ce qui a déjà été sélectionné dans le panier (localStorage) - les éléments du tableau monPanier                
             
             if (monPanier===null){
                 monPanier=[];
+                console.log("3")
             };
-            //si le panier est vide alors on peut ajouter la sélection telle quelle 
+            //si le panier est vide, instancier un tableau pr ajouter la sélection telle quelle 
 
             let _selectionItem = monPanier.find (p => p.id===selectionItem.id && p.couleurKey===selectionItem.couleurKey);
             // le tiret devant la variable est destiné à un usage interne à la fonction ou à la classe
@@ -99,23 +104,31 @@ fetch(urlProduct)
             // cet élément antérieur = _selectionItem?
             //ici comparaison des key MAIS ce sont des valeurs qui sont stockées ds un array
             
-        if (_selectionItem) {
-            _selectionItem.quantiteKey += selectionItem.quantiteKey;
+            // s'il y a un panier = variable _selectionItem = vrai
+            if (_selectionItem) {
+                console.log("4")
+               let totalQuantite = (selectionItem.quantiteKey + _selectionItem.quantiteKey);
+               console.log("5")
             //si selection antérieure de mm produit avec mm couleur, alors lui ajouter nouvelle selection (addition) 
-            // MAIS la quantité ne doit pas dépasser 100
+            // MAIS la quantité ne doit pas dépasser 100, on la réajuste à 100 
             //ici addition par les key
-            
-                if (_selectionItem.quantiteKey > 100) {
-                    _selectionItem.quantiteKey === 100 ;
+                
+                if (totalQuantite > 100) {
+                    console.log("6")
+                    _selectionItem.quantiteKey === _selectionItem.quantiteKey ;
                     alert("Commande limitée à 100 articles pour chaque couleur, merci de vérifier votre panier et d'ajuster le nombre d'articles")
+                    console.log("7")
                 }
                 else {
-                    alert("La quantité a été modifiée. Vous avez" + quantite + "canapé(s)" + data.name + "de couleur" + couleur);
+                    console.log("8")
+                    _selectionItem.quantiteKey += selectionItem.quantiteKey;
+                    console.log("9")
+                    alert("La quantité a été modifiée. Vous avez" + _selectionItem.quantiteKey + "de couleur" + _selectionItem.couleurKey);
                 }
             }
-
             // si la quantité ne dépasse pas 100 items, alors ajouter la selection au panier
             else {
+                console.log("10")
                 monPanier.push (selectionItem);
                 alert("Produit ajouté au panier");
                 //console.log("produit ajouté dans panier");
@@ -123,7 +136,7 @@ fetch(urlProduct)
 
             // stocker le (nvx) panier dans le localStorage
         localStorage.setItem("monPanier", JSON.stringify(monPanier));
-        //console.log("envoi panier dans localStorage")
+        console.log("envoi panier dans localStorage")
 
         //localStorage.clear ();
         } 
