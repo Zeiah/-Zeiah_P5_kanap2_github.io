@@ -68,7 +68,7 @@ fetch(urlProduct)
         
         // la quantite doit etre inférieure ou égale à 100
         if(quantite<=100) {
-            selectionner(selectionItem);// instruction de prendre ici methode définie et utilisée plus bas
+            addSelectionItem(selectionItem);// instruction de prendre ici methode définie et utilisée plus bas
             console.log("nombre d'items:" + typeof quantite); // afficher le type number de la variable quantite
         } 
         
@@ -80,7 +80,7 @@ fetch(urlProduct)
 
 
     //fonction qui sélectionne au moins 1 item, avec une couleur définie, afin de l'ajouter dans le panier 
-    function selectionner(selectionItem) {
+    function addSelectionItem(selectionItem) {
         if (selectionItem.quantiteKey ===0 || selectionItem.couleurKey ==="") {
             alert("Veuillez choisir une couleur et un nombre d'articles");
             console.log("quantité :", selectionItem.quantiteKey);
@@ -122,7 +122,7 @@ fetch(urlProduct)
                 else {
                     console.log("8")
                     _selectionItem.quantiteKey += selectionItem.quantiteKey;
-                    console.log("9")
+                    console.log("9");
                     alert("La quantité a été modifiée. Vous avez" + _selectionItem.quantiteKey + "de couleur" + _selectionItem.couleurKey);
                 }
             }
@@ -136,9 +136,8 @@ fetch(urlProduct)
 
             // stocker le (nvx) panier dans le localStorage
         localStorage.setItem("monPanier", JSON.stringify(monPanier));
-        console.log("envoi panier dans localStorage")
+        console.log("envoi panier dans localStorage");
 
-        //localStorage.clear ();
         } 
 
     };

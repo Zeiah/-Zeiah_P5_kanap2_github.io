@@ -83,13 +83,11 @@ fetch(url)
                     lien.appendChild(article);
 
                     // créer les enfants de article - les relier au parent article
-                    let image = document.createElement("img");
-                    article.appendChild(image);
-                    image.src=data[i].imageUrl;
-
-                    // alt
-                    
-
+                    const img = document.createElement("img");
+                    article.appendChild(img);
+                    img.src=data[i].imageUrl;
+                    img.alt=data[i].altTxt;
+                
                     let titre = document.createElement("h3");
                     article.appendChild(titre);
                     titre.className = "productName";
