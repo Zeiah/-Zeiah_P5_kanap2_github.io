@@ -22,7 +22,7 @@ fetch("http://localhost:3000/api/products")
     console.log(data);
     // aller chercher les données API JSON
 
-    // affichage des éléments du pannier
+    // affichage des éléments du pannier <<>> affichage du DOM
     document.querySelector('#cart__items').innerHTML = ""; // récupérer structure html qui va les accueillir
     for (let i = 0; i < itemsPanier.length; i++) {
       // variables qui récupèrent 3 données de chaque item ds localStorage (id, quantite, couleur)
@@ -38,7 +38,7 @@ fetch("http://localhost:3000/api/products")
       article.className = "cart__item";
       //attribuer à élément <article> id et couleur
       article.setAttribute("data-id", id);
-      article.setAttribute("data-colors", couleur);
+      article.setAttribute("data-color", couleur);
 
       // ajout div "cart__item_img"
       const cartItemImg = document.createElement("div");
@@ -101,7 +101,7 @@ fetch("http://localhost:3000/api/products")
 
       const deleteItem = document.createElement("p");
       supprimerSettings.appendChild(deleteItem);
-      deleteItem.className = "delete__item";
+      deleteItem.className = "deleteItem";
       deleteItem.textContent = "Supprimer";
     }
 
@@ -124,79 +124,110 @@ fetch("http://localhost:3000/api/products")
     };
 
     getTotal();
+    
 
   }).catch(error => {
     console.log("récupération de l'erreur", error);
   });
 
-  function getDeleteItem() {
-    console.log("debut fonction");
-    const btnSupprimer = document.querySelectorAll(".deleteItem");
-    console.log("debut fonction2", btnSupprimer)
-    for (let i = 0; i < btnSupprimer.length; i++) {
-      console.log("debut fonction3")
-      btnSupprimer[i].addEventListener("click", (event) => {
-        console.log("debut fonction4")
-        let cartItemSupp = btnSupprimer[i].closest("article");
-        console.log("article à supp", cartItemSupp);
-        itemsPanier = itemsPanier.filter(p => p.id !== cartItemSupp.dataset.id || p.couleur !== cartItemSupp.dataset.couleur)
+
+
+  function toDeleteItem() {
+    console.log("1 debut fonction");
+    const btnToDeleteItem = document.querySelectorAll('.deleteItem');
+    console.log("2 debut fonction2", btnToDeleteItem);
+    
+    for (let i = 0; i < itemsPanier.length; i++) {
+      console.log("3 boucle")
+      btnToDeleteItem.addEventListener('click', function() {
+        console.log("4 debut event");
+        let cartItemToDelete = itemsPanier[i].btnToDeleteItem.closest("article");
+        console.log("5 article to delete", cartItemToDelete);
+        itemsPanier = itemsPanier.filter(
+          p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
+        );
         localStorage.setItem("itemsPanier", JSON.stringify(itemsPanier));
+
+        const section= document.querySelector("#cart__items");
+        section.removeChild(btnToDeleteItem.closest("article"));
+        alert("Votre article a été supprimé");
+        
         // rafaichir page >> recalcul total quantite et prix
         window.location.reload();
-
-        //const idDelete= target.closest("article").getAttribute("data-id");
-        //const couleurDelete= target.closest("article").getAttribute("data-colors");
-        //console.log(couleurDelete);
-        //console.log(idDelete);
       })
     }
   };
+  
+  toDeleteItem();
 
-  getDeleteItem();
-
-/*function deleteItem() {
-  let btnSupprimer = document.querySelector(".deleteItem");
-  for (let i=0; i<btnSupprimer; i++){
-    btnSupprimer[i].addEventListener("click", (event) => {
+  /*ESSAI 2 
+  
+  function toDeleteItem() {
+    console.log("debut fonction1");
+    const btnToDeleteItem = document.querySelectorAll(".deleteItem");
+    console.log("debut fonction2", btnToDeleteItem);
+    
+    for (let i = 0; i < btnToDeleteItem.length; i++) {
+      console.log("debut fonction3 - boucle");
+      btnToDeleteItem.addEventListener("click", (event) => {
+        console.log("debut fonction4 - addEventListener");
+        let monPanier = JSON.parse(localStorage.getItem('monPanier'));
+        console.log("récuperer panier 5", monPanier);
+        const cartItemToDelete = btnToDeleteItem.closest("article");
+        console.log("identifier article 6.1", cartItemToDelete);
+        const idCartItemToDelete= event.target.closest("article").getAttribute("data-id");
+        console.log("identifier article 6.2", idCartItemToDelete);
+        const colorCartItemToDelete= event.target.closest("article").getAttribute("data-color");
+        console.log("identifier article 6.3", colorCartItemToDelete);
+        const rechercheCartItemToDelete = monPanier.find(
+          (p) => p.id===idCartItemToDelete && p.couleurKey===colorCartItemToDelete
+        );
+        monPanier = monPanier.filter(
+          (p) => p !== rechercheCartItemToDelete
+        );
+        localStorage.setItem("monPanier", JSON.stringify(monPanier));
+        console.log("envoi panier dans localStorage");
+        const section= document.querySelector("#cart__items");
+        section.removeChild(event.target.closest("article"));
+        alert("Votre article a été supprimé");
+        getTotal();
+      });
+    }
+  };
+    
+  toDeleteItem();
+    
+function deleteItem() {
+  let btnToDeleteItem = document.querySelector(".deleteItem");
+  for (let i=0; i<btnToDeleteItem; i++){
+    btnToDeleteItem[i].addEventListener("click", (event) => {
       event.preventDefault();
-      const cartItemSupp = btnSupprimer[i].closest('.cart__item');
-      console.log(cartItemSupp);
+      const cartItemToDelete = btnToDeleteItem[i].closest('.cart__item');
+      console.log(cartItemToDelete);
       const idDelete= event.target.closest("article").getAttribute("data-id");
       const couleurDelete= event.target.closest("article").getAttribute("data-colors");
       console.log(couleurDelete);
       console.log(idDelete);
-    
-    /*
-    
-    let btnSupprimer = document.querySelector(".deleteItem");
-    btnSupprimer[i].addEventListener("click", (event) => {
-      event.preventDefault();
-      const cartItemSupp = btnSupprimer.closest('.cart__item');
-      console.log(cartItemSupp);
-      const idDelete= event.target.closest("article").getAttribute("data-id");
-      const couleurDelete= event.target.closest("article").getAttribute("data-colors");
-      console.log(couleurDelete);
-      console.log(idDelete);
 
-    if(cartItemSupp !== null){
+    if(cartItemToDelete !== null){
   
     }else {
       alert("item non trouvé");
     }
-    console.log(cartItemSupp);
+    console.log(cartItemToDelete);
     
     //chercher l'élement dans LS qui a cet id et cette couleur
     let monPanier=JSON.parse(localStorage.getItem('monPanier'));
-    let cartItemDansLS = monPanier.find (p => p.id===cartItemSupp.idDelete && p.couleurKey===cartItemSupp.couleurDelete);
+    let cartItemDansLS = monPanier.find (p => p.id===cartItemToDelete.idDelete && p.couleurKey===cartItemToDelete.couleurDelete);
     
     // si mm id et mm couleur alors supprimer
-    if (cartItemDansLS.id === cartItemSupp.idDelete 
-        && cartItemDansLS.couleurKey === cartItemSupp.couleurDelete) {
+    if (cartItemDansLS.id === cartItemToDelete.idDelete 
+        && cartItemDansLS.couleurKey === cartItemToDelete.couleurDelete) {
           itemsPanier.splice(0,1);
           console.log("supp ds DOM")
           cartItemDansLS.remove();
           console.log("supp item ds LS")
-          cartItemSupp.removeItem();
+          cartItemToDelete.removeItem();
           console.log("supp item");
     } ;
     

@@ -123,7 +123,7 @@ fetch(urlProduct)
                     console.log("8")
                     _selectionItem.quantiteKey += selectionItem.quantiteKey;
                     console.log("9");
-                    alert("La quantité a été modifiée. Vous avez" + _selectionItem.quantiteKey + "de couleur" + _selectionItem.couleurKey);
+                    alert("La quantité a été modifiée");
                 }
             }
             // si la quantité ne dépasse pas 100 items, alors ajouter la selection au panier
