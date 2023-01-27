@@ -13,7 +13,7 @@ function getPanier() {
   };
 }
 
-const itemsPanier = getPanier(); // créer une variable qui appelle la fonction
+let itemsPanier = getPanier(); // créer une variable qui appelle la fonction
 
 
 fetch("http://localhost:3000/api/products")
@@ -26,10 +26,10 @@ fetch("http://localhost:3000/api/products")
     document.querySelector('#cart__items').innerHTML = ""; // récupérer structure html qui va les accueillir
     for (let i = 0; i < itemsPanier.length; i++) {
       // variables qui récupèrent 3 données de chaque item ds localStorage (id, quantite, couleur)
-      const id = itemsPanier[i].id;
+      let id = itemsPanier[i].id;
       let quantite = itemsPanier[i].quantiteKey;
-      const couleur = itemsPanier[i].couleurKey;
-      const item = data.find(p => id === p._id); // id de chaque item correspond à l'id ds json
+      let couleur = itemsPanier[i].couleurKey;
+      let item = data.find(p => id === p._id); // id de chaque item correspond à l'id ds json
       console.log("1", item);
 
       // ajout article "cart__item"
@@ -103,90 +103,109 @@ fetch("http://localhost:3000/api/products")
       supprimerSettings.appendChild(deleteItem);
       deleteItem.className = "delete__item";
       deleteItem.textContent = "Supprimer";
-    }  
-    
-  //calcul "totalQuantity" et "totaPrice"
-  
-  function getTotal() {
-    let quantiteTotal = 0;
-    let prixTotal = 0;
-    
-    for (let i = 0; i <itemsPanier.length; i++) {
-      let quantite = itemsPanier[i].quantiteKey;
-      let prix = data[i].price;
-      quantiteTotal += quantite;
-      prixTotal += quantite * prix;
-      console.log(quantiteTotal);
-      console.log(prixTotal);
     }
-    document.querySelector('#totalQuantity').innerHTML=quantiteTotal;
-    document.querySelector('#totalPrice').innerHTML=prixTotal;
-  }
 
-  getTotal();
-  
-  function deleteItem() {
-    let btnSupprimer = document.querySelector(".delete__item");
-    for (let i=0; i<btnSupprimer; i++){
-      btnSupprimer[i].addEventListener("click", (event) => {
-        event.preventDefault();
-        const cartItemSupp = btnSupprimer[i].closest('.cart__item');
-        console.log(cartItemSupp);
-        const idDelete= event.target.closest("article").getAttribute("data-id");
-        const couleurDelete= event.target.closest("article").getAttribute("data-colors");
-        console.log(couleurDelete);
-        console.log(idDelete);
+    //calcul "totalQuantity" et "totaPrice"
 
-    })
+    function getTotal() {
+      let quantiteTotal = 0;
+      let prixTotal = 0;
 
-}
-  }
-
-  deleteItem()
-      
-      /*
-      
-      let btnSupprimer = document.querySelector(".delete__item");
-      btnSupprimer[i].addEventListener("click", (event) => {
-        event.preventDefault();
-        const cartItemSupp = btnSupprimer.closest('.cart__item');
-        console.log(cartItemSupp);
-        const idDelete= event.target.closest("article").getAttribute("data-id");
-        const couleurDelete= event.target.closest("article").getAttribute("data-colors");
-        console.log(couleurDelete);
-        console.log(idDelete);
-
-      if(cartItemSupp !== null){
-    
-      }else {
-        alert("item non trouvé");
+      for (let i = 0; i < itemsPanier.length; i++) {
+        let quantite = itemsPanier[i].quantiteKey;
+        let prix = data[i].price;
+        quantiteTotal += quantite;
+        prixTotal += quantite * prix;
+        console.log(quantiteTotal);
+        console.log(prixTotal);
       }
+      document.querySelector('#totalQuantity').innerHTML = quantiteTotal;
+      document.querySelector('#totalPrice').innerHTML = prixTotal;
+    };
+
+    getTotal();
+
+  }).catch(error => {
+    console.log("récupération de l'erreur", error);
+  });
+
+  function getDeleteItem() {
+    console.log("debut fonction");
+    const btnSupprimer = document.querySelectorAll(".deleteItem");
+    console.log("debut fonction2", btnSupprimer)
+    for (let i = 0; i < btnSupprimer.length; i++) {
+      console.log("debut fonction3")
+      btnSupprimer[i].addEventListener("click", (event) => {
+        console.log("debut fonction4")
+        let cartItemSupp = btnSupprimer[i].closest("article");
+        console.log("article à supp", cartItemSupp);
+        itemsPanier = itemsPanier.filter(p => p.id !== cartItemSupp.dataset.id || p.couleur !== cartItemSupp.dataset.couleur)
+        localStorage.setItem("itemsPanier", JSON.stringify(itemsPanier));
+        // rafaichir page >> recalcul total quantite et prix
+        window.location.reload();
+
+        //const idDelete= target.closest("article").getAttribute("data-id");
+        //const couleurDelete= target.closest("article").getAttribute("data-colors");
+        //console.log(couleurDelete);
+        //console.log(idDelete);
+      })
+    }
+  };
+
+  getDeleteItem();
+
+/*function deleteItem() {
+  let btnSupprimer = document.querySelector(".deleteItem");
+  for (let i=0; i<btnSupprimer; i++){
+    btnSupprimer[i].addEventListener("click", (event) => {
+      event.preventDefault();
+      const cartItemSupp = btnSupprimer[i].closest('.cart__item');
       console.log(cartItemSupp);
-      
-      //chercher l'élement dans LS qui a cet id et cette couleur
-      let monPanier=JSON.parse(localStorage.getItem('monPanier'));
-      let cartItemDansLS = monPanier.find (p => p.id===cartItemSupp.idDelete && p.couleurKey===cartItemSupp.couleurDelete);
-      
-      // si mm id et mm couleur alors supprimer
-      if (cartItemDansLS.id === cartItemSupp.idDelete 
-          && cartItemDansLS.couleurKey === cartItemSupp.couleurDelete) {
-            itemsPanier.splice(0,1);
-            console.log("supp ds DOM")
-            cartItemDansLS.remove();
-            console.log("supp item ds LS")
-            cartItemSupp.remove();
-            console.log("supp item");
-      } ;
-      
-      // rafaichir page >> recalcul total quantite et prix
-      window.location.reload();*/
-      
-
+      const idDelete= event.target.closest("article").getAttribute("data-id");
+      const couleurDelete= event.target.closest("article").getAttribute("data-colors");
+      console.log(couleurDelete);
+      console.log(idDelete);
     
+    /*
+    
+    let btnSupprimer = document.querySelector(".deleteItem");
+    btnSupprimer[i].addEventListener("click", (event) => {
+      event.preventDefault();
+      const cartItemSupp = btnSupprimer.closest('.cart__item');
+      console.log(cartItemSupp);
+      const idDelete= event.target.closest("article").getAttribute("data-id");
+      const couleurDelete= event.target.closest("article").getAttribute("data-colors");
+      console.log(couleurDelete);
+      console.log(idDelete);
 
-  }).catch (error => {
-  console.log("récupération de l'erreur", error);
-});
+    if(cartItemSupp !== null){
+  
+    }else {
+      alert("item non trouvé");
+    }
+    console.log(cartItemSupp);
+    
+    //chercher l'élement dans LS qui a cet id et cette couleur
+    let monPanier=JSON.parse(localStorage.getItem('monPanier'));
+    let cartItemDansLS = monPanier.find (p => p.id===cartItemSupp.idDelete && p.couleurKey===cartItemSupp.couleurDelete);
+    
+    // si mm id et mm couleur alors supprimer
+    if (cartItemDansLS.id === cartItemSupp.idDelete 
+        && cartItemDansLS.couleurKey === cartItemSupp.couleurDelete) {
+          itemsPanier.splice(0,1);
+          console.log("supp ds DOM")
+          cartItemDansLS.remove();
+          console.log("supp item ds LS")
+          cartItemSupp.removeItem();
+          console.log("supp item");
+    } ;
+    
+    */
+
+
+
+
+
 
 
 
