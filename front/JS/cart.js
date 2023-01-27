@@ -36,7 +36,8 @@ fetch("http://localhost:3000/api/products")
       const article = document.createElement("article");
       document.querySelector('#cart__items').appendChild(article);
       article.className = "cart__item";
-      article.setAttribute("data-id", id);//attribuer à élément article id et couleur
+      //attribuer à élément <article> id et couleur
+      article.setAttribute("data-id", id);
       article.setAttribute("data-colors", couleur);
 
       // ajout div "cart__item_img"
@@ -102,11 +103,9 @@ fetch("http://localhost:3000/api/products")
       supprimerSettings.appendChild(deleteItem);
       deleteItem.className = "delete__item";
       deleteItem.textContent = "Supprimer";
-      //mettre un événement localStorage.removeItem ()
-
     }  
     
-    //calcul "totalQuantity" et "totaPrice"
+  //calcul "totalQuantity" et "totaPrice"
   
   function getTotal() {
     let quantiteTotal = 0;
@@ -125,20 +124,74 @@ fetch("http://localhost:3000/api/products")
   }
 
   getTotal();
-
-
   
-  
-            
+  function deleteItem() {
+    let btnSupprimer = document.querySelector(".delete__item");
+    for (let i=0; i<btnSupprimer; i++){
+      btnSupprimer[i].addEventListener("click", (event) => {
+        event.preventDefault();
+        const cartItemSupp = btnSupprimer[i].closest('.cart__item');
+        console.log(cartItemSupp);
+        const idDelete= event.target.closest("article").getAttribute("data-id");
+        const couleurDelete= event.target.closest("article").getAttribute("data-colors");
+        console.log(couleurDelete);
+        console.log(idDelete);
 
+    })
 
+}
+  }
+
+  deleteItem()
+      
+      /*
+      
+      let btnSupprimer = document.querySelector(".delete__item");
+      btnSupprimer[i].addEventListener("click", (event) => {
+        event.preventDefault();
+        const cartItemSupp = btnSupprimer.closest('.cart__item');
+        console.log(cartItemSupp);
+        const idDelete= event.target.closest("article").getAttribute("data-id");
+        const couleurDelete= event.target.closest("article").getAttribute("data-colors");
+        console.log(couleurDelete);
+        console.log(idDelete);
+
+      if(cartItemSupp !== null){
+    
+      }else {
+        alert("item non trouvé");
+      }
+      console.log(cartItemSupp);
+      
+      //chercher l'élement dans LS qui a cet id et cette couleur
+      let monPanier=JSON.parse(localStorage.getItem('monPanier'));
+      let cartItemDansLS = monPanier.find (p => p.id===cartItemSupp.idDelete && p.couleurKey===cartItemSupp.couleurDelete);
+      
+      // si mm id et mm couleur alors supprimer
+      if (cartItemDansLS.id === cartItemSupp.idDelete 
+          && cartItemDansLS.couleurKey === cartItemSupp.couleurDelete) {
+            itemsPanier.splice(0,1);
+            console.log("supp ds DOM")
+            cartItemDansLS.remove();
+            console.log("supp item ds LS")
+            cartItemSupp.remove();
+            console.log("supp item");
+      } ;
+      
+      // rafaichir page >> recalcul total quantite et prix
+      window.location.reload();*/
+      
+
+    
 
   }).catch (error => {
   console.log("récupération de l'erreur", error);
 });
 
 
-/* *function changeQuantite (id, couleur, newQuantite) {
+
+
+/*function changeQuantite (id, couleur, newQuantite) {
   let inputNewQuantite = document.querySelector('.itemQuantity');
   for (let i = 0; i<newQuantite.length; i++) {
     inputNewQuantite.addEventListener("change", (event) =>{
@@ -149,92 +202,43 @@ fetch("http://localhost:3000/api/products")
       let oldQuantite = itemsPanier[i].quantiteKey;
       let newQuantite = document.querySelector(".cart__item__content__settings__quantity").value;
       
-      let newSelectionItem = {
+      let necartItemDansLS = {
         id: id,
         quantiteKey: newQuantite,
         couleurKey: couleur
       }
-      console.log(newSelectionItem); //dans console: retourner nvl objet
-
-      //effacer ancien produit, recharger nouveau
-      Element.closest()
-      let _newSelectionItem = monPanier.find (p => p.id===newSelectionItem.id && p.couleurKey===newSelectionItem.couleurKey);
-      
-
-    
+      console.log(necartItemDansLS); //dans console: retourner nvl objet
+        
 // stocker le (nvx) panier dans le localStorage
             localStorage.setItem("monPanier", JSON.stringify(monPanier));
             console.log("envoi panier dans localStorage");
-
-            //rafraichir page
-            window.location.reload();
-    })
-  }
   
-
-
-
-
 /*
 // modifier la quantite
 const inputChangeQuantite = document.querySelector('.itemQuantity');
 inputChangeQuantite.addEventListener("change", function(){
     let newQuantite = document.querySelector(".cart__item__content__settings__quantity").value ;
-    let newSelectionItem = {
+    let necartItemDansLS = {
       id: urlId,
       quantiteKey: newQuantite,
       couleurKey: couleur
     }
-    console.log(newSelectionItem);
-    changeQuantite(newSelectionItem);
+    console.log(necartItemDansLS);
+    changeQuantite(necartItemDansLS);
   })
 
 //fonction 
-function changeQuantite(newSelectionItem) {
-  let _newSelectionItem = itemsPanier.find (p => p.id===newSelectionItem.id && p.couleurKey===newSelectionItem.couleurKey);
-  let quantiteTotal = (newSelectionItem.quantiteKey + _newSelectionItem.quantiteKey);
-  itemsPanier.push(newSelectionItem);
+function changeQuantite(necartItemDansLS) {
+  let _necartItemDansLS = itemsPanier.find (p => p.id===necartItemDansLS.id && p.couleurKey===necartItemDansLS.couleurKey);
+  let quantiteTotal = (necartItemDansLS.quantiteKey + _necartItemDansLS.quantiteKey);
+  itemsPanier.push(necartItemDansLS);
   alert("La quantite de cet item a été modifiée dans votre panier");
 
   // stocker la (nlle) quantite dans le localStorage
   localStorage.setItem("itemsPanier", JSON.stringify(itemsPanier));
   console.log("modification quantite dans localStorage")
 }
-
-    // appel des fonctions calculant prix total et quantite totale
-    getPrixTotal();
-    getQuantiteTotal();
-
-    //fonction prix total
-    function getPrixTotal() {
-    let prixTotal = 0;
-    document.querySelector('#totalPrice').textContent=prixTotal;
-    for (let item of itemsPanier) {
-    prixTotal += quantiteKey * item.price;
-    }
-    return prixTotal;
-    };
-    
-    // fonction quantite totale
-    function getQuantiteTotal() {
-      let quantiteTotal = 0;
-      document.querySelector('#totalQuantity').textContent=quantiteTotal;
-      for (let item of itemsPanier) {
-        quantiteTotal += quantiteKey;
-      }
-    return quantiteTotal;
-    }
-
-//function calculTotalQuantite () {}
-
- *//*//calcul totalQuantity() = addition de toutes les quantités
-      let quantiteTotal = 0;
-      itemsPanier.array.forEach(element => {
-          quantiteTotal +quantite;
-          console.log(quantiteTotal);
-        });
-      document.querySelector('#totalQuantity');*/
-  
+ 
 /*fonction supprimer item
 supprimertItem.addEventListener("click", function() {
   localStorage.removeItem(ItemPanier);
@@ -242,34 +246,6 @@ supprimertItem.addEventListener("click", function() {
   let monPanierModifie = array.from(monPanier);     
 });
 
-//effacement de l'écran >> regénérer page avec item supprime
-document.querySelector('cart__item') = "";
-GetPanier(monPanierModifie);
-
 // parser panier, mapper, fetcher avec id >> map(function (monPanier)){ */
 
-//meme methode que dans product.js mais récupérer dans le localstorage
-/*<section id="cart__items">
-<!--  <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
-   <div class="cart__item__img">
-     <img src="../images/product01.jpg" alt="Photographie d'un canapé">
-   </div>
-   <div class="cart__item__content">
-     <div class="cart__item__content__description">
-       <h2>Nom du produit</h2>
-       <p>Vert</p>
-       <p>42,00 €</p>
-     </div>
-     <div class="cart__item__content__settings">
-       <div class="cart__item__content__settings__quantity">
-         <p>Qté : </p>
-         <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
-       </div>
-       <div class="cart__item__content__settings__delete">
-         <p class="deleteItem">Supprimer</p>
-       </div>
-     </div>
-   </div>
- </article> -->
-</section>*/
 
