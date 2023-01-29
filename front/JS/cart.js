@@ -141,17 +141,18 @@ fetch("http://localhost:3000/api/products")
           console.log("4 debut event");
           let cartItemToDelete = event.target.closest("article");
           console.log("5 article to delete", cartItemToDelete);
-          let newItemsPanier = itemsPanier.filter(p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
-            );
+          let monPanier = itemsPanier.filter(p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
+            ); // newItemsPanier >> monPanier (comme sur la page product)
           console.log("6 filtrer nouveau panier");
 
-          localStorage.setItem("newItemsPanier", JSON.stringify(itemsPanier));
+          localStorage.setItem("monPanier", JSON.stringify(monPanier)); // cf ligne 45
           console.log("7 envoyer dans LS");
           
           const section= document.querySelector("#cart__items");
           section.removeChild(bouton.closest("article"));
-          alert("Votre article a été supprimé");
           console.log("8 suppression article du DOM");
+          alert("Votre article a été supprimé");
+          
    
           // rafaichir page >> recalcul total quantite et prix
           window.location.reload();
