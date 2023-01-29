@@ -155,7 +155,8 @@ fetch("http://localhost:3000/api/products")
           
    
           // rafaichir page >> recalcul total quantite et prix
-          window.location.reload();
+          //window.location.reload();
+          getPanier ()
         });
       }
     };
