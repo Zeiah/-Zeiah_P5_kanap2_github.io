@@ -1,7 +1,7 @@
 // nommer la page 
-document.title = "Mon panier";
+document.title = "Kanap Mon panier";
 
-// récupérer les éléments sélectionnés et ajoutés au panier
+// récupérer dans le localStorage les éléments sélectionnés et ajoutés au panier
 function getPanier() {
   let monPanier = localStorage.getItem('monPanier');
   if (monPanier == null) {
@@ -16,20 +16,20 @@ function getPanier() {
 let itemsPanier = getPanier(); // créer une variable qui appelle la fonction
 
 
+/* // Appel de l'API pour l'affichage des éléments du DOM
+  // Récupérer les propriétés non enregistrées dans le localStorage */
 fetch("http://localhost:3000/api/products")
   .then(response => response.json())
   .then(data => {
     console.log(data);
-    // aller chercher les données API JSON
-
-    // affichage des éléments du pannier <<>> affichage du DOM
+    
     document.querySelector('#cart__items').innerHTML = ""; // récupérer structure html qui va les accueillir
     for (let i = 0; i < itemsPanier.length; i++) {
       // variables qui récupèrent 3 données de chaque item ds localStorage (id, quantite, couleur)
       let id = itemsPanier[i].id;
       let quantite = itemsPanier[i].quantiteKey;
       let couleur = itemsPanier[i].couleurKey;
-      let item = data.find(p => id === p._id); // id de chaque item correspond à l'id ds json
+      let item = data.find(p => id === p._id); // id item ds LS doit correspondre à id item ds json
       console.log("1", item);
 
       // ajout article "cart__item"
@@ -94,11 +94,9 @@ fetch("http://localhost:3000/api/products")
       choixQuantiteSettings.setAttribute("max", "100");
 
       //Ajout setting : supprimer
-
       const supprimerSettings = document.createElement("div");
       settingsContentCartItem.appendChild(supprimerSettings);
       supprimerSettings.className = "cart__item__content__settings__delete";
-
       const deleteItem = document.createElement("p");
       supprimerSettings.appendChild(deleteItem);
       deleteItem.className = "deleteItem";
@@ -106,7 +104,6 @@ fetch("http://localhost:3000/api/products")
     }
 
     //calcul "totalQuantity" et "totaPrice"
-
     function getTotal() {
       let quantiteTotal = 0;
       let prixTotal = 0;
@@ -124,24 +121,61 @@ fetch("http://localhost:3000/api/products")
     };
 
     getTotal();
+
+
+    /* Sélectionner l'élément à supprimer dans le localStorage
+ * Faire un tableau avec les btn à supprimer
+ * Chercher id de item ds tableau et comparer avec item ds LS
+ * Filtrer item trouvé et supprimer du panier LS
+ * Enregistrer le nouveau panier dans LS
+ * Rafraichir la page */
+
+    function toDeleteItem() {
+      console.log("1 debut fonction");
+      let boutons = document.querySelectorAll(`.deleteItem`);
+      console.log("2 debut fonction2", boutons);
+      
+      for (let bouton of Array.from(boutons)) {
+        console.log("3 boucle")
+        bouton.addEventListener("click", event => {
+          console.log("4 debut event");
+          let cartItemToDelete = event.target.closest("article");
+          console.log("5 article to delete", cartItemToDelete);
+          let newItemsPanier = itemsPanier.filter(p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
+            );
+          console.log("6 filtrer nouveau panier");
+
+          localStorage.setItem("newItemsPanier", JSON.stringify(itemsPanier));
+          console.log("7 envoyer dans LS");
+          
+          const section= document.querySelector("#cart__items");
+          section.removeChild(bouton.closest("article"));
+          alert("Votre article a été supprimé");
+          console.log("8 suppression article du DOM");
+   
+          // rafaichir page >> recalcul total quantite et prix
+          window.location.reload();
+        });
+      }
+    };
+    
+    toDeleteItem();
     
 
   }).catch(error => {
     console.log("récupération de l'erreur", error);
   });
 
+ 
 
-
-  function toDeleteItem() {
-    console.log("1 debut fonction");
-    const btnToDeleteItem = document.querySelectorAll('.deleteItem');
-    console.log("2 debut fonction2", btnToDeleteItem);
-    
-    for (let i = 0; i < itemsPanier.length; i++) {
+  /*
+  
+  ESSAI 3
+  for (let i = 0; i < boutons.length; i++) {
       console.log("3 boucle")
-      btnToDeleteItem.addEventListener('click', function() {
+      boutons.addEventListener('click', (event) => {
         console.log("4 debut event");
-        let cartItemToDelete = itemsPanier[i].btnToDeleteItem.closest("article");
+        let cartItemToDelete = boutons[i].closest("article");
         console.log("5 article to delete", cartItemToDelete);
         itemsPanier = itemsPanier.filter(
           p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
@@ -149,7 +183,7 @@ fetch("http://localhost:3000/api/products")
         localStorage.setItem("itemsPanier", JSON.stringify(itemsPanier));
 
         const section= document.querySelector("#cart__items");
-        section.removeChild(btnToDeleteItem.closest("article"));
+        section.removeChild(boutons.closest("article"));
         alert("Votre article a été supprimé");
         
         // rafaichir page >> recalcul total quantite et prix
@@ -158,22 +192,21 @@ fetch("http://localhost:3000/api/products")
     }
   };
   
-  toDeleteItem();
-
-  /*ESSAI 2 
+  
+  ESSAI 2 
   
   function toDeleteItem() {
     console.log("debut fonction1");
-    const btnToDeleteItem = document.querySelectorAll(".deleteItem");
-    console.log("debut fonction2", btnToDeleteItem);
+    const boutons = document.querySelectorAll(".deleteItem");
+    console.log("debut fonction2", boutons);
     
-    for (let i = 0; i < btnToDeleteItem.length; i++) {
+    for (let i = 0; i < boutons.length; i++) {
       console.log("debut fonction3 - boucle");
-      btnToDeleteItem.addEventListener("click", (event) => {
+      boutons.addEventListener("click", (event) => {
         console.log("debut fonction4 - addEventListener");
         let monPanier = JSON.parse(localStorage.getItem('monPanier'));
         console.log("récuperer panier 5", monPanier);
-        const cartItemToDelete = btnToDeleteItem.closest("article");
+        const cartItemToDelete = boutons.closest("article");
         console.log("identifier article 6.1", cartItemToDelete);
         const idCartItemToDelete= event.target.closest("article").getAttribute("data-id");
         console.log("identifier article 6.2", idCartItemToDelete);
@@ -198,11 +231,11 @@ fetch("http://localhost:3000/api/products")
   toDeleteItem();
     
 function deleteItem() {
-  let btnToDeleteItem = document.querySelector(".deleteItem");
-  for (let i=0; i<btnToDeleteItem; i++){
-    btnToDeleteItem[i].addEventListener("click", (event) => {
+  let boutons = document.querySelector(".deleteItem");
+  for (let i=0; i<boutons; i++){
+    boutons[i].addEventListener("click", (event) => {
       event.preventDefault();
-      const cartItemToDelete = btnToDeleteItem[i].closest('.cart__item');
+      const cartItemToDelete = boutons[i].closest('.cart__item');
       console.log(cartItemToDelete);
       const idDelete= event.target.closest("article").getAttribute("data-id");
       const couleurDelete= event.target.closest("article").getAttribute("data-colors");
