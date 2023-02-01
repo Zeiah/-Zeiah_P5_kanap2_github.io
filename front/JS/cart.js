@@ -152,6 +152,7 @@ fetch("http://localhost:3000/api/products")
           section.removeChild(bouton.closest("article"));
           console.log("8 suppression article du DOM");
           alert("Votre article a été supprimé");
+          getTotal()
           
    
           // rafaichir page >> recalcul total quantite et prix
@@ -164,16 +165,158 @@ fetch("http://localhost:3000/api/products")
     
     toDeleteItem();
     
-
   }).catch(error => {
     console.log("récupération de l'erreur", error);
   });
 
+
+ /* FORMULAIRE ET COMMANDE
+  * validation formulaire
+  * commmande order*/
+
  
+ // fonctions de validation du formulaire
+
+function validationFirstName(firstName) {
+  let masqueFirstName = new RegExp(/\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/gm);
+  let validFirstName= masqueFirstName.test(firstName);
+  console.log(validFirstName);
+  if (!validFirstName) {
+    return false;
+  } else {
+    return true; 
+  }
+}
+
+function validationLastName(lastName) {
+  let masqueLastName = new RegExp(/\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/gm);
+  let validLastName = masqueLastName.test(lastName);
+  console.log(validLastName);
+  if (!validLastName) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function validationAddress(address) {
+  let masqueAddress = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/);
+  let validAddress = masqueAddress.test(address);
+  console.log(validAddress);
+  if (!validAddress) {
+    return false;
+  } else {
+    return true;
+  }
+}
+ 
+function validationCity(city) {
+  let masqueCity = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
+  let validCity = masqueCity.test(city);
+  console.log(validCity);
+  if (!validCity) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function validationEmail(email) {
+  let masqueEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
+  let validEmail = masqueEmail.test(email);
+  if (!validEmail) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+    
+    // vérification du formulaire
+    validationLastName()
+    if (validationLastName()) {
+      console.log("Nom valide");
+    } else {
+      const lastNameError = document.querySelector("#lastNameErrorMsg");
+      lastNameError.innerHTML = "Erreur dans votre prénom";
+      alert = ("Veuillez saisir votre nom");
+    }
+    validationAddress()
+    if (validationAddress()) {
+      console.log("Adresse valide");
+    } else {
+      const addressError = document.querySelector("#addressErrorMsg")
+      addressError.innerHTML = "Erreur dans votre adresse";
+      alert = ("Veuillez saisir votre adresse");
+    }
+
+    validationCity()
+    if (validationCity()) {
+      console.log("Code postal et ville valides");
+    } else {
+      const cityError = document.querySelector("#cityErrorMsg");
+      cityError.innerHTML = "Erreur dans votre code postal et votre ville";
+      alert = ("Veuillez saisir votre code postal et votre ville");
+    }
+
+    validationEmail()
+    if (validationEmail()) {
+      console.log("Email valide");
+    } else {
+      const emailError = document.querySelector("#emailErrorMsg")
+      emailError.innerHTML = "Erreur dans votre email";
+      alert = ("veuillez saisir un email valide");
+    }
+
+    validationFirstName()
+    if (validationFirstName()) {
+      console.log("Prénom valide");
+    } else {
+      const firstNameError = document.querySelector("#firstNameErrorMsg");
+      firstNameError.innerHTML = "Erreur dans votre nom";
+      alert = ("Veuillez saisir votre prénom");
+    }
+
+
+
+ //commander : post formulaire et panier
+ function commander(){
+  const inputCartOrder = document.querySelector("#order");
+  inputCartOrder.addEventListener("submit", function(event){
+    event.preventDefault();
+   
+    //Création de l'objet Cart Order 
+    formulaire = {
+      firstName: event.target.querySelector("[name-firstName]").value,
+      lastName: event.target.querySelector("[name-lastName]").value,
+      address: event.target.querySelector("[name-address]").value,
+      city: event.target.querySelector("[name-city]").value,
+      email: event.target.querySelector("[name-email]").value,
+    };
+
+
+    // ajouter le panier à partir du LS
+    // création de la charge utile au format JSON
+    const chargeUtile = JSON.stringify(formulaire);
+    // appel de la fonction Fetch, avec les infos nécessaires
+    fetch("http://localhost:3000/api/products", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: chargeUtile,
+    });
+  });
+}
+
+commander();
+
+
+
+  
+
 
   /*
   
-  ESSAI 3
+  ESSAI 3 delete item
   for (let i = 0; i < boutons.length; i++) {
       console.log("3 boucle")
       boutons.addEventListener('click', (event) => {
