@@ -170,123 +170,124 @@ fetch("http://localhost:3000/api/products")
   });
 
 
- /* FORMULAIRE ET COMMANDE
-  * validation formulaire
+ /* form ET COMMANDE
+  * validation form
   * commmande order*/
 
  
- // fonctions de validation du formulaire
+ // ******************* formulaire **********************
 
-function validationFirstName(firstName) {
-  let masqueFirstName = new RegExp(/\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/gm);
-  let validFirstName= masqueFirstName.test(firstName);
-  console.log(validFirstName);
-  if (!validFirstName) {
-    return false;
-  } else {
-    return true; 
-  }
-}
+  let form = document.querySelector(".cart__order__form");
 
-function validationLastName(lastName) {
-  let masqueLastName = new RegExp(/\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/gm);
-  let validLastName = masqueLastName.test(lastName);
-  console.log(validLastName);
-  if (!validLastName) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-function validationAddress(address) {
-  let masqueAddress = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/);
-  let validAddress = masqueAddress.test(address);
-  console.log(validAddress);
-  if (!validAddress) {
-    return false;
-  } else {
-    return true;
-  }
-}
+  //écoute des modifications des champs du formulaire 
+  form.firstName.addEventListener("change", function(){
+    validationFirstName(this);
+  });
+  form.lastName.addEventListener("change", function(){
+    validationLastName(this);
+  });
+   form.address.addEventListener("change", function(){
+    validationAddress(this);
+  });
+  form.city.addEventListener("change", function(){
+    validationCity(this);
+  });
+  form.email.addEventListener("change", function(){
+    validationEmail(this);
+  });
+  
+  //vérification des inputs
  
-function validationCity(city) {
-  let masqueCity = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
-  let validCity = masqueCity.test(city);
-  console.log(validCity);
-  if (!validCity) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-function validationEmail(email) {
-  let masqueEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
-  let validEmail = masqueEmail.test(email);
-  if (!validEmail) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-    
-    // vérification du formulaire
-    validationLastName()
-    if (validationLastName()) {
-      console.log("Nom valide");
+  const validationFirstName = function(inputFirstName) {
+    let firstNameRegexp = new RegExp(/^[a-zA-Z-\s]+$/);
+    let firstNameError = document.querySelector(".firstNameErrorMsg");
+    if (firstNameRegexp.test(inputFirstName.value)) {
+      console.log("nom ok");
+      return true
     } else {
-      const lastNameError = document.querySelector("#lastNameErrorMsg");
-      lastNameError.innerHTML = "Erreur dans votre prénom";
-      alert = ("Veuillez saisir votre nom");
+      firstNameError.innerHTML= "nom non valide";
+      alert("Veuillez saisir votre nom");
+      return false
     }
-    validationAddress()
-    if (validationAddress()) {
-      console.log("Adresse valide");
+  };
+  
+  const validationLastName = function (inputLastName) {
+    let lastNameRegexp = new RegExp(/^[a-zA-Z-\s]+$/);
+    let lastNameError = document.querySelector(".lastNameErrorMsg");
+    if (lastNameRegexp.test(inputLastName.value)) {
+      console.log("prénom ok");
+      return true;
     } else {
-      const addressError = document.querySelector("#addressErrorMsg")
-      addressError.innerHTML = "Erreur dans votre adresse";
-      alert = ("Veuillez saisir votre adresse");
+      lastNameError.innerHTML= " prénom invalide";
+      alert("Veuillez saisir votre prénom");
+      return false
     }
-
-    validationCity()
-    if (validationCity()) {
-      console.log("Code postal et ville valides");
+  };
+  
+  const validationAddress = function (inputAddress) {
+    let addressRegexp = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/);
+    let addressError = document.querySelector(".addressErrorMsg");
+    if (addressRegexp.test(inputAddress.value)) {
+      console.log("adresse ok");
+      return true;
     } else {
-      const cityError = document.querySelector("#cityErrorMsg");
-      cityError.innerHTML = "Erreur dans votre code postal et votre ville";
-      alert = ("Veuillez saisir votre code postal et votre ville");
+      addressError.innerHTML= " adresse non valide";
+      alert("Veuillez saisir votre adresse");
+      return false
     }
-
-    validationEmail()
-    if (validationEmail()) {
-      console.log("Email valide");
+  };
+  
+  const validationCity = function (inputCity) {
+    let cityRegexp = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
+    let cityError = document.querySelector(".cityErrorMsg");
+    if (cityRegexp.test(inputCity.value)) {
+      console.log("ville et code postal ok");
+      return true;
     } else {
-      const emailError = document.querySelector("#emailErrorMsg")
-      emailError.innerHTML = "Erreur dans votre email";
-      alert = ("veuillez saisir un email valide");
+      cityError.innerHTML = "code postal et nom de ville non valides";
+      alert("Veuillez saisir votre code postal et votre ville");
+      return false
     }
+  };
 
-    validationFirstName()
-    if (validationFirstName()) {
-      console.log("Prénom valide");
+  const validationEmail = function(inputEmail) {
+    let emailRegexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
+    let emailError = document.querySelector(".emailErrorMsg");
+    if (emailRegexp.test(inputEmail.value)) {
+      console.log("email ok");
+      return true;
     } else {
-      const firstNameError = document.querySelector("#firstNameErrorMsg");
-      firstNameError.innerHTML = "Erreur dans votre nom";
-      alert = ("Veuillez saisir votre prénom");
+      emailError.innerHTML= " email non valide";
+      alert("Veuillez saisir votre email");
+      return false
     }
+  };
+  
+// soumission des inputs
+ form.addEventListener("submit", function(event){
+  event.preventDefault();
+  if ((validationFirstName(form.firstName))
+    && (validationLastName(form.lastName))
+    && (validationAddress(form.address))
+    && (validationCity(form.city))
+    && (validationEmail(form.email))) {
+      form.submit()
+    }
+ });
+
+ 
 
 
 
- //commander : post formulaire et panier
+
+ /*//commander : post form et panier
  function commander(){
   const inputCartOrder = document.querySelector("#order");
   inputCartOrder.addEventListener("submit", function(event){
     event.preventDefault();
    
     //Création de l'objet Cart Order 
-    formulaire = {
+    form = {
       firstName: event.target.querySelector("[name-firstName]").value,
       lastName: event.target.querySelector("[name-lastName]").value,
       address: event.target.querySelector("[name-address]").value,
@@ -297,7 +298,7 @@ function validationEmail(email) {
 
     // ajouter le panier à partir du LS
     // création de la charge utile au format JSON
-    const chargeUtile = JSON.stringify(formulaire);
+    const chargeUtile = JSON.stringify(form);
     // appel de la fonction Fetch, avec les infos nécessaires
     fetch("http://localhost:3000/api/products", {
       method: "POST",
