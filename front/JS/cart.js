@@ -102,32 +102,52 @@ fetch("http://localhost:3000/api/products")
       deleteItem.className = "deleteItem";
       deleteItem.textContent = "Supprimer";
     }
-
-    //calcul "totalQuantity" et "totaPrice"
-    function getTotal() {
-      let quantiteTotal = 0;
-      let prixTotal = 0;
-
-      for (let i = 0; i < itemsPanier.length; i++) {
-        let quantite = itemsPanier[i].quantiteKey;
-        let prix = data[i].price;
-        quantiteTotal += quantite;
-        prixTotal += quantite * prix;
-        console.log(quantiteTotal);
-        console.log(prixTotal);
-      }
-      document.querySelector('#totalQuantity').innerHTML = quantiteTotal;
-      document.querySelector('#totalPrice').innerHTML = prixTotal;
-    };
-
-    getTotal();
-  
-   toDeleteItem();
-   toModifyQuantity()
+    
+  getTotal();
+  toModifyQuantity()
+  toDeleteItem();
 
   }).catch(error => {
     console.log("récupération de l'erreur", error);
   });
+
+
+//calcul "totalQuantity" et "totalPrice"
+
+function getTotal() {
+  fetch("http://localhost:3000/api/products")
+  .then(response => response.json())
+  .then(data => {
+
+      let quantiteTotal = 0;
+      for (let i = 0; i < itemsPanier.length; i++) {
+        let quantite = itemsPanier[i].quantiteKey;
+        console.log("Quantite item: ", quantite)
+        quantiteTotal += parseInt(quantite);
+        console.log("Quantité totale:", quantiteTotal);
+      }
+      document.querySelector('#totalQuantity').innerHTML = quantiteTotal;
+
+      let prixTotal = 0;
+      let prixTotalParItem = 0;
+      for (let i = 0; i < itemsPanier.length; i++) {
+        let id = itemsPanier[i].id;
+        let item = data.find(p => id === p._id);
+        let quantite = itemsPanier[i].quantiteKey;
+        let prix = item.price;
+        console.log("Prix item:", prix)
+        prixTotalParItem = quantite * prix;
+        console.log("Prix total item:", prixTotalParItem)
+        
+        prixTotal += quantite * prix;
+        console.log("Prix total:", prixTotal);
+      }
+      document.querySelector('#totalPrice').innerHTML = prixTotal;
+    
+  }).catch(error => {
+    console.log("récupération de l'erreur", error);
+  });
+}
 
 
 //************* modifier quantité d'un item ********************
@@ -140,9 +160,9 @@ function toModifyQuantity() {
   for (let i=0; i < modifQuantity.length; i++) {
     modifQuantity[i].addEventListener("change", () => {
       let oldQuantite = itemsPanier[i].quantiteKey;
-      console.log("1 old quantite", oldQuantite)
-      let newQuantite = modifQuantity[i].value //valueAsNumber;
-      console.log("2 new quantite", newQuantite)
+      console.log("1 old quantite", oldQuantite);
+      let newQuantite = modifQuantity[i].value;
+      console.log("2 new quantite", newQuantite);
       
       if (newQuantite > 100) {
         alert("Vous ne pouvez pas commander plus de 100 canapés pour chaque couleur");
@@ -151,8 +171,8 @@ function toModifyQuantity() {
         const verifQuantite = itemsPanier.find ((item) => item.newQuantite !== oldQuantite);
         verifQuantite.quantiteKey = newQuantite;
         itemsPanier[i].quantiteKey = verifQuantite.quantiteKey;
-        //itemsPanier[i].quantiteKey = newQuantite
         
+        //enregistrer le nouveau panier dans le localStorage
         localStorage.setItem("monPanier", JSON.stringify(itemsPanier))
         alert("La quantité a été modifiée");
       }
@@ -160,45 +180,7 @@ function toModifyQuantity() {
       return location.reload()
     })
   }
-} 
-
-
-    /*// sélection de la nouvelle quantite de l'item
-
-    let newQuantity = modifyQuantity[i].value;
-    itemsPanier[i] = newItem;
-    
-    // créer un nouvel objet avec la quantité modifiée
-    let newItem = {
-      id: itemsPanier[i].id,
-      couleurKey: itemsPanier[i].couleurKey,
-      quantiteKey: newQuantity
-    };
-    console.log("new item", newItem);
-
-    if (newQuantity > 100) {
-      console.log("quantite > 100");
-      modifyQuantity[i].quantiteKey === modifyQuantity[i].quantiteKey ;
-      //break;
-      alert("Commande limitée à 100 articles pour chaque couleur");
-      console.log("alerte, quantite non modifiée");
-      
-    } else {
-        console.log("quantite < 100");
-        localStorage.monPanier.push(newItem);
-        alert("Quantité modifiée");
-    }
-    // actualiser le localStorage avec l'item modifié
-    localStorage.setItem("monPanier", JSON.stringify(newItem));
-
-    // indiquer que le panier a été modifié et recalculer totaux quantité et prix
-    alert("Votre panier a été mis à jour");
-    getTotal();
-    })
-  }
-}*/
-
-
+}
 
 
 //************* supprimer un item ******************************
