@@ -72,7 +72,7 @@ fetch(urlProduct)
             console.log("nombre d'items:" + typeof quantite); // afficher le type number de la variable quantite
         } 
         
-        else{
+        else {
             alert("Vous ne pouvez pas choisir plus de 100 items pour chaque canapé");
             //console.log("nombre d'items supérieur à 100");
         };
