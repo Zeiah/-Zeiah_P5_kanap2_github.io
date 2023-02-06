@@ -120,28 +120,27 @@ function getTotal() {
   .then(data => {
 
       let quantiteTotal = 0;
-      for (let i = 0; i < itemsPanier.length; i++) {
-        let quantite = itemsPanier[i].quantiteKey;
-        console.log("Quantite item: ", quantite)
-        quantiteTotal += parseInt(quantite);
-        console.log("Quantité totale:", quantiteTotal);
-      }
-      document.querySelector('#totalQuantity').innerHTML = quantiteTotal;
-
       let prixTotal = 0;
       let prixTotalParItem = 0;
+      
       for (let i = 0; i < itemsPanier.length; i++) {
         let id = itemsPanier[i].id;
         let item = data.find(p => id === p._id);
+        
         let quantite = itemsPanier[i].quantiteKey;
+        console.log("Quantite item: ", quantite)
         let prix = item.price;
         console.log("Prix item:", prix)
         prixTotalParItem = quantite * prix;
         console.log("Prix total item:", prixTotalParItem)
         
+        quantiteTotal += parseInt(quantite);
+        console.log("Quantité totale:", quantiteTotal);
+        
         prixTotal += quantite * prix;
         console.log("Prix total:", prixTotal);
       }
+      document.querySelector('#totalQuantity').innerHTML = quantiteTotal;
       document.querySelector('#totalPrice').innerHTML = prixTotal;
     
   }).catch(error => {
@@ -230,8 +229,91 @@ function toDeleteItem() {
 
 
  // ******************* formulaire **********************
+ const form = document.querySelector(".cart__order__form");
+ const firstName = document.querySelector("#firstName");
+ const lastName = document.querySelector("#lastName");
+ const address = document.querySelector("#address");
+ const city = document.querySelector("#city");
+ const email = document.querySelector("#email");
 
-  let form = document.querySelector(".cart__order__form");
+ const firstNameError = document.querySelector(".firstNameErrorMsg");
+ const lastNameError = document.querySelector(".lastNameErrorMsg");
+ const addressError = document.querySelector(".addressErrorMsg");
+ const cityError = document.querySelector(".cityErrorMsg");
+ const emailError = document.querySelector(".emailErrorMsg");
+
+ function validationFirstName() {
+  let firstNameRegexp = new RegExp(/^[a-zA-Z-\s]+$/);
+  if ((firstName.value == null) || (firstNameRegexp.test(firstName.value)== false)) {
+    firstNameError.innerHTML = "erreur dans le nom";
+    console.log("erreur nom");
+    return false
+  } else {
+    firstNameError.innerHTML = null;
+    console.log("nom ok");
+    return true  
+  }
+};
+
+function validationLastName () {
+  let lastNameRegexp = new RegExp(/^[a-zA-Z-\s]+$/);
+  if ((lastName.value == null) || (lastNameRegexp.test(inputLastName.value) == false)) {
+    lastNameError.innerHTML= "Erreur dans le prénom";
+    console.log("erreur prénom");
+    return false
+  } else {
+    lastNameError.innerHTML= " ";
+    return true
+  }
+};
+
+function validationAddress() {
+  let addressRegexp = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/);
+  if ((address.value == null) || (addressRegexp.test(address.value) == false)) {
+    addressError.innerHTML = "Erreur dans l'adresse (format: 6 rue Alain)";
+    console.log("erreur adresse");
+    return false
+  } else {
+    addressError.innerHTML= " ";
+    console.log("adresse ok");
+    return true
+  }
+};
+
+function validationCity() {
+  let cityRegexp = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
+  if ((city.value == null) || (cityRegexp.test(city.value) == false)) {
+    cityError.innerHTML = "Erreur dans la ville (format: code postal + ville)";
+    console.log("erreur city");
+    return false
+  } else {
+    cityError.innerHTML = " ";
+    console.log("city ok");
+    return true
+  }
+};
+
+function validationEmail() {
+  let emailRegexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
+  testEmail= emailRegexp.test(email.value)
+  if (email.value == null || testEmail == false) {
+    emailError.innerHTML= "erreur dans l'email (format: fsdsffs@gdfd.com)";
+    console.log("erreur email");
+    return false;
+  } else {
+    emailError.innerHTML = " ";
+    console.log("email ok");
+    return true
+  }
+};
+
+validationFirstName()
+validationLastName()
+validationAddress()
+validationCity()
+validationEmail()
+
+  /*let form = document.querySelector(".cart__order__form");
 
   //écoute des modifications des champs du formulaire 
   form.firstName.addEventListener("change", function(){
@@ -254,68 +336,18 @@ function toDeleteItem() {
  
   const validationFirstName = function(inputFirstName) {
     let firstNameRegexp = new RegExp(/^[a-zA-Z-\s]+$/);
-    let firstNameError = document.querySelector(".firstNameErrorMsg");
-    if (firstNameRegexp.test(inputFirstName.value)) {
-      console.log("nom ok");
-      return true
-    } else {
-      firstNameError.innerHTML= "nom non valide";
+    if ((inputFirstName.value = null) || (firstNameRegexp.test(inputFirstName.value))) {
+      let firstNameError = document.querySelector(".firstNameErrorMsg");
+      firstNameError.innerHTML= "erreur dans le nom";
       alert("Veuillez saisir votre nom");
       return false
+    } else {
+      console.log("nom ok");
+      return true  
     }
   };
   
-  const validationLastName = function (inputLastName) {
-    let lastNameRegexp = new RegExp(/^[a-zA-Z-\s]+$/);
-    let lastNameError = document.querySelector(".lastNameErrorMsg");
-    if (lastNameRegexp.test(inputLastName.value)) {
-      console.log("prénom ok");
-      return true;
-    } else {
-      lastNameError.innerHTML= " prénom invalide";
-      alert("Veuillez saisir votre prénom");
-      return false
-    }
-  };
   
-  const validationAddress = function (inputAddress) {
-    let addressRegexp = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/);
-    let addressError = document.querySelector(".addressErrorMsg");
-    if (addressRegexp.test(inputAddress.value)) {
-      console.log("adresse ok");
-      return true;
-    } else {
-      addressError.innerHTML= " adresse non valide";
-      alert("Veuillez saisir votre adresse");
-      return false
-    }
-  };
-  
-  const validationCity = function (inputCity) {
-    let cityRegexp = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
-    let cityError = document.querySelector(".cityErrorMsg");
-    if (cityRegexp.test(inputCity.value)) {
-      console.log("ville et code postal ok");
-      return true;
-    } else {
-      cityError.innerHTML = "code postal et nom de ville non valides";
-      alert("Veuillez saisir votre code postal et votre ville");
-      return false
-    }
-  };
-
-  const validationEmail = function(inputEmail) {
-    let emailRegexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
-    let emailError = document.querySelector(".emailErrorMsg");
-    if (emailRegexp.test(inputEmail.value)) {
-      console.log("email ok");
-      return true;
-    } else {
-      emailError.innerHTML= " email non valide";
-      alert("Veuillez saisir votre email");
-      return false
-    }
-  };
   
 // soumission des inputs
  form.addEventListener("submit", function(event){
@@ -329,7 +361,7 @@ function toDeleteItem() {
   ) {
       form.submit()
     }
- });
+ });*/
 
  //***************** commander***********
  
@@ -340,8 +372,23 @@ function toDeleteItem() {
   btnCommander.addEventListener("submit", async function(event){
     event.preventDefault();
    
+    if (
+      (validationFirstName(firstName))
+      && (validationLastName(lastName))
+      && (validationAddress(address))
+      && (validationCity(city))
+      && (validationEmail(email))
+    ) {
+      form = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value
+      } 
+    }
     //Création de l'objet Cart Order 
-    formulaireEtPanier = {
+    /* = {
       form : {
         // comme form.submit() plus haut >> form: form
         // formData.append(name, value)?
@@ -354,7 +401,7 @@ function toDeleteItem() {
       },
       monPanier : {itemsPanier},
       
-    };
+    };*/
 
     // ajouter le panier à partir du LS
     // création de la charge utile au format JSON
@@ -365,8 +412,8 @@ function toDeleteItem() {
       headers: {"Content-Type": "application/json"},
       body: chargeUtile,
     });
-    let verifQuantite = await response.json();
-    alert(verifQuantite.message)
+    let result = await response.json();
+    alert(result.message)
     // message doit contenir id de commande dans url
   });
 }
