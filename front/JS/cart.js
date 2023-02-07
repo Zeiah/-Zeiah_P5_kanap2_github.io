@@ -230,78 +230,77 @@ function toDeleteItem() {
 
 /************ Bon de commande *********************/
 
-function commander() {
-  const btnCommander = document.querySelector("#order");
-  btnCommander.addEventListener("click", function(event) {
-    event.preventDefault();
+const btnCommander = document.querySelector("#order");
+btnCommander.addEventListener("click", function (event) {
+  event.preventDefault();
 
-    //Récupérer dans un objet les données du formulaire
-    const contact = {
-      firstName: document.querySelector("#firstName").value,
-      lastName: document.querySelector("#lastName").value,
-      address: document.querySelector("#address").value,
-      city: document.querySelector("#city").value,
-      email: document.querySelector("#email").value
-    };
+  //Récupérer dans un objet les données du formulaire
+  const contact = {
+    firstName: document.querySelector("#firstName").value,
+    lastName: document.querySelector("#lastName").value,
+    address: document.querySelector("#address").value,
+    city: document.querySelector("#city").value,
+    email: document.querySelector("#email").value
+  };
 
-    // Vérifier les données saisies dans les différents champs du formulaire
-    function validationFirstName() {
-      let masqueFirstName = new RegExp(/^[A-Za-z[\s]'\-.,]{2,31}$/i);
-      if (masqueFirstName.test(contact.firstName)) {
-        console.log("firstName ok");
-        return true;
-      } else {
-        const firstNameError = document.querySelector("#firstNameErrorMsg");
-        firstNameError.innerHTML = "Erreur dans votre nom: 2 lettres minimum";
-      }
-    };
+  // Vérifier les données saisies dans les différents champs du formulaire
+  function validationFirstName() {
+    let masqueFirstName = new RegExp(/^[A-Za-z[\s]'\-.,]{2,31}$/i);
+    if (masqueFirstName.test(contact.firstName)) {
+      console.log("firstName ok");
+      return true;
+    } else {
+      const firstNameError = document.querySelector("#firstNameErrorMsg");
+      firstNameError.innerHTML = "Erreur dans votre nom: 2 lettres minimum";
+    }
+  };
 
-    function validationLastName() {
-      let masqueLastName = new RegExp(/^[A-Za-z[\s]'\-.,]{2,31}$/i);
-      if (masqueLastName.test(contact.lastName)) {
-        console.log("lastName ok");
-        return true;
-      } else {
-        const lastNameError = document.querySelector("#lastNameErrorMsg");
-        lastNameError.innerHTML = "Erreur dans votre prénom: 2 lettres minimum";
-      }
-    };
+  function validationLastName() {
+    let masqueLastName = new RegExp(/^[A-Za-z[\s]'\-.,]{2,31}$/i);
+    if (masqueLastName.test(contact.lastName)) {
+      console.log("lastName ok");
+      return true;
+    } else {
+      const lastNameError = document.querySelector("#lastNameErrorMsg");
+      lastNameError.innerHTML = "Erreur dans votre prénom: 2 lettres minimum";
+    }
+  };
 
-    function validationAddress() {
-      let masqueAddress = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/i);
-      if (masqueAddress.test(contact.address)) {
-        console.log("address ok");
-        return true;
-      } else {
-        const addressError = document.querySelector("#addressErrorMsg")
-        addressError.innerHTML = "Merci de vérifier votre adresse : n° + nom de la voie";
-      }
-    };
+  function validationAddress() {
+    let masqueAddress = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/i);
+    if (masqueAddress.test(contact.address)) {
+      console.log("address ok");
+      return true;
+    } else {
+      const addressError = document.querySelector("#addressErrorMsg")
+      addressError.innerHTML = "Merci de vérifier votre adresse : n° + nom de la voie";
+    }
+  };
 
-    function validationCity() {
-      let masqueCity = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
-      if (masqueCity.test(contact.city)) {
-        console.log("city ok");
-        return true;
-      } else {
-        const cityError = document.querySelector("#cityErrorMsg");
-        cityError.innerHTML = "Merci d'indiquez votre code postal et votre ville";
-      }
-    };
+  function validationCity() {
+    let masqueCity = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
+    if (masqueCity.test(contact.city)) {
+      console.log("city ok");
+      return true;
+    } else {
+      const cityError = document.querySelector("#cityErrorMsg");
+      cityError.innerHTML = "Merci d'indiquer votre code postal et votre ville";
+    }
+  };
 
-    function validationEmail() {
-      let masqueEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
-      if (masqueEmail.test(contact.email)) {
-        console.log("email ok")
-        return true;
-      } else {
-        const emailError = document.querySelector("#emailErrorMsg")
-        emailError.innerHTML = "Merci de renseigner un email valide (monMail123@nomdedomaine.com)"; 
-      }
-    };
+  function validationEmail() {
+    let masqueEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
+    if (masqueEmail.test(contact.email)) {
+      console.log("email ok")
+      return true;
+    } else {
+      const emailError = document.querySelector("#emailErrorMsg")
+      emailError.innerHTML = "Merci de renseigner un email valide (monMail123@nomdedomaine.com)";
+    }
+  };
 
-    // Validation du formulaire avant envoi
-    function validationFormContact() {
+  // Validation du formulaire avant envoi
+  function validationFormContact() {
     if (
       validationFirstName()
       && validationLastName()
@@ -316,26 +315,48 @@ function commander() {
     };
   };
 
-    validationFormContact()
+  validationFormContact()
+
+  // Construire le panier à partir du LS (quid quantite et couleur?)
+  let getIdItemsPanier = itemsPanier.map(i => i.id);
+  console.log("recup id des items du panier", getIdItemsPanier);
+
+  // création de la charge utile au format JSON
+  const chargeUtile = JSON.stringify({
+    contact: {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      address: address.value,
+      city: city.value,
+      email: email.value
+    },
+    panier: getIdItemsPanier,
+  }
+  );
+
+  // appel de la fonction Fetch, avec les infos nécessaires
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: chargeUtile,
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+    // se diriger vers page order avec l'id de la commande
+    document.location.href = `confirmation.html`;
+    //id=${data.id}
+
+    // vider le local storage et vider le pannier : localStorage.clear()
+  })
+
+}).catch(error => {
+  console.log("récupération de l'erreur", error);
+});
 
 
-
-    // ajouter le panier à partir du LS
-    // création de la charge utile au format JSON
-    const chargeUtile = JSON.stringify(contact);
-    // appel de la fonction Fetch, avec les infos nécessaires
-    fetch("http://localhost:3000/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: chargeUtile,
-    });
-
-    // se diriger vers page order
-    // effacer le local storage et vider le pannier : localStorage.clear()
-  });
-}
-
-commander();
 /*
 // ******************* formulaire **********************
  const form = document.querySelector(".cart__order__form");
@@ -351,123 +372,9 @@ commander();
  let cityError = document.querySelector(".cityErrorMsg");
  let emailError = document.querySelector(".emailErrorMsg");
 
- function validationFirstName(firstName) {
-  let masqueFirstName = new RegExp(/^[a-zA-Z '-.,]{1,31}$^/i);
-  let validFirstName= masqueFirstName.test(firstName);
-  if (!validFirstName) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
-function validationLastName(lastName) {
-  let masqueLastName = new RegExp(/^[a-zA-Z '-.,]{1,31}$^/i);
-  let validLastName = masqueLastName.test(lastName);
-  if (!validLastName) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
-function validationAddress(address) {
-  let masqueAddress = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/);
-  let validAddress = masqueAddress.test(address);
-  if (!validAddress) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
-function validationCity(city) {
-  let masqueCity = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
-  let validCity = masqueCity.test(city);
-  console.log(validCity);
-  if (!validCity) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
-function validationEmail(email) {
-  let masqueEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
-  let validEmail = masqueEmail.test(email);
-  if (!validEmail) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
  //***************** commander***********
 
- // post le formulaire et le panier
-
- // function commander(){
-  const btnCommander = document.querySelector("#order");
-  btnCommander.addEventListener("click", function(event){
-    event.preventDefault();
-
-    // vérification du formulaire
-
-    validationFirstName()
-    if (validationFirstName()) {
-      console.log("Prénom ok");
-    } else {
-      firstNameError.innerHTML = "Merci de vérifier votre nom";
-      console.log("erreur nom")
-    }
-
-    validationLastName()
-    if (validationLastName()) {
-      console.log("Nom ok");
-    } else {
-      lastNameError.innerHTML = "Merci de vérifier votre prénom";
-    }
-
-    validationAddress()
-    if (validationAddress()) {
-      console.log("Adresse ok");
-    } else {
-      addressError.innerHTML = "Erreur! Merci d'indiquer le n° et le nom de la voie";
-    }
-
-    validationCity()
-    if (validationCity()) {
-      console.log("ville ok");
-    } else {
-      cityError.innerHTML = "Erreur! Merci d'indiquer votre code postal et votre ville";
-    }
-
-    validationEmail()
-    if (validationEmail()) {
-      console.log("Email ok");
-    } else {
-      emailError.innerHTML = "Merci de vérifier votre email (format: monMail@nomdedomaine.com)";
-    }
-  })
-
-
-    /* if (
-      (validationFirstName(firstName))
-      && (validationLastName(lastName))
-      && (validationAddress(address))
-      && (validationCity(city))
-      && (validationEmail(email))
-    ) {
-      form = {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        address: address.value,
-        city: city.value,
-        email: email.value
-      }
-    } else {
-      alert("Veuillez remplir le formulaire")
-    }
+ 
 
     //Création de l'objet Cart Order
     /* = {
@@ -485,196 +392,176 @@ function validationEmail(email) {
 
     };*/
 
-/*// ajouter le panier à partir du LS
-// création de la charge utile au format JSON
-const chargeUtile = JSON.stringify(formulaireEtPanier);
-// appel de la fonction Fetch, avec les infos nécessaires
-let response = await fetch("http://localhost:3000/api/products", {
-  method: "POST",
-  headers: {"Content-Type": "application/json"},
-  body: chargeUtile,
-});
-let result = await response.json();
-alert(result.message)
-// message doit contenir id de commande dans url*/
-
-  //});
-/*
 
 
-
-
-  
-
-
-  /* ESSAI 5
-  function toDeleteItem() {
-  console.log("1 debut fonction");
-  let btnToDelete = document.querySelector(".deleteItem");
-  console.log("2 debut fonction2");
-  
-  btnToDelete.forEach((btnToDelete) => {
-    console.log(btnToDelete);
-    btnToDelete.addEventListener("click", () => {
-      // appel au localStorage
-      let panier = JSON.parse(localStorage.getItem("monPanier"));
-      // retrouver cartItem à partir bouton
-      let cartDelete = btnToDelete.closest(".cart__item");
-      for (let i = 0; i < panier.length; i++) {
-        if (
-          panier[i]._id === cartDelete.dataset.id &&
-          panier[i].couleur === cartDelete.dataset.couleur
-        ){
-          let itemToDelete = [i];
-          let nouveauPanier = JSON.parse(localStorage.getItem("monPanier"));
-          nouveauPanier.splice(itemToDelete,1);
-          if (nouveauPanier && nouveauPanier.length == 0){
-            document.querySelector("#totalQuantity").innerHTML = "0";
-            document.querySelector("#totalPrice").innerHTML = "0";
-            document.querySelector("h1").innerHTML =
-              "Vous n'avez plus d'article dans votre panier";
-          }
-          localStorage.monPanier = JSON.stringify(nouveauPanier);
-          getTotal()
-          return location.reload()
-        } 
-      }
-    })
-  }
+/* ESSAI 5
+function toDeleteItem() {
+console.log("1 debut fonction");
+let btnToDelete = document.querySelector(".deleteItem");
+console.log("2 debut fonction2");
+ 
+btnToDelete.forEach((btnToDelete) => {
+  console.log(btnToDelete);
+  btnToDelete.addEventListener("click", () => {
+    // appel au localStorage
+    let panier = JSON.parse(localStorage.getItem("monPanier"));
+    // retrouver cartItem à partir bouton
+    let cartDelete = btnToDelete.closest(".cart__item");
+    for (let i = 0; i < panier.length; i++) {
+      if (
+        panier[i]._id === cartDelete.dataset.id &&
+        panier[i].couleur === cartDelete.dataset.couleur
+      ){
+        let itemToDelete = [i];
+        let nouveauPanier = JSON.parse(localStorage.getItem("monPanier"));
+        nouveauPanier.splice(itemToDelete,1);
+        if (nouveauPanier && nouveauPanier.length == 0){
+          document.querySelector("#totalQuantity").innerHTML = "0";
+          document.querySelector("#totalPrice").innerHTML = "0";
+          document.querySelector("h1").innerHTML =
+            "Vous n'avez plus d'article dans votre panier";
+        }
+        localStorage.monPanier = JSON.stringify(nouveauPanier);
+        getTotal()
+        return location.reload()
+      } 
+    }
+  })
+}
 )}
-  
+ 
 
-  ESSAI 4 delete item // fonctionne mais ne s'efface pas du panier
-  function toDeleteItem() {
-  console.log("1 debut fonction");
-  let boutons = document.querySelectorAll(`.deleteItem`);
-  console.log("2 debut fonction2", boutons);
-  
-  for (let bouton of Array.from(boutons)) {
-    console.log("3 boucle")
-    bouton.addEventListener("click", event => {
-      console.log("4 debut event");
-      let cartItemToDelete = event.target.closest("article");
-      console.log("5 article to delete", cartItemToDelete);
-      let monPanier = itemsPanier.filter(p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
-        ); // newItemsPanier >> monPanier (comme sur la page product)
-      console.log("6 filtrer nouveau panier");
+ESSAI 4 delete item // fonctionne mais ne s'efface pas du panier
+function toDeleteItem() {
+console.log("1 debut fonction");
+let boutons = document.querySelectorAll(`.deleteItem`);
+console.log("2 debut fonction2", boutons);
+ 
+for (let bouton of Array.from(boutons)) {
+  console.log("3 boucle")
+  bouton.addEventListener("click", event => {
+    console.log("4 debut event");
+    let cartItemToDelete = event.target.closest("article");
+    console.log("5 article to delete", cartItemToDelete);
+    let monPanier = itemsPanier.filter(p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
+      ); // newItemsPanier >> monPanier (comme sur la page product)
+    console.log("6 filtrer nouveau panier");
 
-      localStorage.setItem("monPanier", JSON.stringify(monPanier)); // cf ligne 45
-      console.log("7 envoyer dans LS");
-      
-      const section= document.querySelector("#cart__items");
-      section.removeChild(bouton.closest("article"));
-      console.log("8 toDeleteItem article du DOM");
-      alert("Votre article a été supprimé");
-      getTotal()
-      
+    localStorage.setItem("monPanier", JSON.stringify(monPanier)); // cf ligne 45
+    console.log("7 envoyer dans LS");
+    
+    const section= document.querySelector("#cart__items");
+    section.removeChild(bouton.closest("article"));
+    console.log("8 toDeleteItem article du DOM");
+    alert("Votre article a été supprimé");
+    getTotal()
+    
 
-      // rafaichir page >> recalcul total quantite et prix
-      //window.location.reload();
-      //getPanier () + getTotal()
-      window.Location.href="cart.html"
-    });
-  }
+    // rafaichir page >> recalcul total quantite et prix
+    //window.location.reload();
+    //getPanier () + getTotal()
+    window.Location.href="cart.html"
+  });
+}
 };
 
 toDeleteItem();
+ 
+ESSAI 3 delete item
+for (let i = 0; i < boutons.length; i++) {
+    console.log("3 boucle")
+    boutons.addEventListener('click', (event) => {
+      console.log("4 debut event");
+      let cartItemToDelete = boutons[i].closest("article");
+      console.log("5 article to delete", cartItemToDelete);
+      itemsPanier = itemsPanier.filter(
+        p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
+      );
+      localStorage.setItem("itemsPanier", JSON.stringify(itemsPanier));
+
+      const section= document.querySelector("#cart__items");
+      section.removeChild(boutons.closest("article"));
+      alert("Votre article a été supprimé");
+      
+      // rafaichir page >> recalcul total quantite et prix
+      window.location.reload();
+    })
+  }
+};
+ 
+ 
+ESSAI 2 
+ 
+function toDeleteItem() {
+  console.log("debut fonction1");
+  const boutons = document.querySelectorAll(".deleteItem");
+  console.log("debut fonction2", boutons);
   
-  ESSAI 3 delete item
   for (let i = 0; i < boutons.length; i++) {
-      console.log("3 boucle")
-      boutons.addEventListener('click', (event) => {
-        console.log("4 debut event");
-        let cartItemToDelete = boutons[i].closest("article");
-        console.log("5 article to delete", cartItemToDelete);
-        itemsPanier = itemsPanier.filter(
-          p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
-        );
-        localStorage.setItem("itemsPanier", JSON.stringify(itemsPanier));
-
-        const section= document.querySelector("#cart__items");
-        section.removeChild(boutons.closest("article"));
-        alert("Votre article a été supprimé");
-        
-        // rafaichir page >> recalcul total quantite et prix
-        window.location.reload();
-      })
-    }
-  };
+    console.log("debut fonction3 - boucle");
+    boutons.addEventListener("click", (event) => {
+      console.log("debut fonction4 - addEventListener");
+      let monPanier = JSON.parse(localStorage.getItem('monPanier'));
+      console.log("récuperer panier 5", monPanier);
+      const cartItemToDelete = boutons.closest("article");
+      console.log("identifier article 6.1", cartItemToDelete);
+      const idCartItemToDelete= event.target.closest("article").getAttribute("data-id");
+      console.log("identifier article 6.2", idCartItemToDelete);
+      const colorCartItemToDelete= event.target.closest("article").getAttribute("data-color");
+      console.log("identifier article 6.3", colorCartItemToDelete);
+      const rechercheCartItemToDelete = monPanier.find(
+        (p) => p.id===idCartItemToDelete && p.couleurKey===colorCartItemToDelete
+      );
+      monPanier = monPanier.filter(
+        (p) => p !== rechercheCartItemToDelete
+      );
+      localStorage.setItem("monPanier", JSON.stringify(monPanier));
+      console.log("envoi panier dans localStorage");
+      const section= document.querySelector("#cart__items");
+      section.removeChild(event.target.closest("article"));
+      alert("Votre article a été supprimé");
+      getTotal();
+    });
+  }
+};
   
+toDeleteItem();
   
-  ESSAI 2 
-  
-  function toDeleteItem() {
-    console.log("debut fonction1");
-    const boutons = document.querySelectorAll(".deleteItem");
-    console.log("debut fonction2", boutons);
-    
-    for (let i = 0; i < boutons.length; i++) {
-      console.log("debut fonction3 - boucle");
-      boutons.addEventListener("click", (event) => {
-        console.log("debut fonction4 - addEventListener");
-        let monPanier = JSON.parse(localStorage.getItem('monPanier'));
-        console.log("récuperer panier 5", monPanier);
-        const cartItemToDelete = boutons.closest("article");
-        console.log("identifier article 6.1", cartItemToDelete);
-        const idCartItemToDelete= event.target.closest("article").getAttribute("data-id");
-        console.log("identifier article 6.2", idCartItemToDelete);
-        const colorCartItemToDelete= event.target.closest("article").getAttribute("data-color");
-        console.log("identifier article 6.3", colorCartItemToDelete);
-        const rechercheCartItemToDelete = monPanier.find(
-          (p) => p.id===idCartItemToDelete && p.couleurKey===colorCartItemToDelete
-        );
-        monPanier = monPanier.filter(
-          (p) => p !== rechercheCartItemToDelete
-        );
-        localStorage.setItem("monPanier", JSON.stringify(monPanier));
-        console.log("envoi panier dans localStorage");
-        const section= document.querySelector("#cart__items");
-        section.removeChild(event.target.closest("article"));
-        alert("Votre article a été supprimé");
-        getTotal();
-      });
-    }
-  };
-    
-  toDeleteItem();
-    
 function deleteItem() {
-  let boutons = document.querySelector(".deleteItem");
-  for (let i=0; i<boutons; i++){
-    boutons[i].addEventListener("click", (event) => {
-      event.preventDefault();
-      const cartItemToDelete = boutons[i].closest('.cart__item');
-      console.log(cartItemToDelete);
-      const idDelete= event.target.closest("article").getAttribute("data-id");
-      const couleurDelete= event.target.closest("article").getAttribute("data-colors");
-      console.log(couleurDelete);
-      console.log(idDelete);
-
-    if(cartItemToDelete !== null){
-  
-    }else {
-      alert("item non trouvé");
-    }
+let boutons = document.querySelector(".deleteItem");
+for (let i=0; i<boutons; i++){
+  boutons[i].addEventListener("click", (event) => {
+    event.preventDefault();
+    const cartItemToDelete = boutons[i].closest('.cart__item');
     console.log(cartItemToDelete);
-    
-    //chercher l'élement dans LS qui a cet id et cette couleur
-    let monPanier=JSON.parse(localStorage.getItem('monPanier'));
-    let cartItemDansLS = monPanier.find (p => p.id===cartItemToDelete.idDelete && p.couleurKey===cartItemToDelete.couleurDelete);
-    
-    // si mm id et mm couleur alors supprimer
-    if (cartItemDansLS.id === cartItemToDelete.idDelete 
-        && cartItemDansLS.couleurKey === cartItemToDelete.couleurDelete) {
-          itemsPanier.splice(0,1);
-          console.log("supp ds DOM")
-          cartItemDansLS.remove();
-          console.log("supp item ds LS")
-          cartItemToDelete.removeItem();
-          console.log("supp item");
-    } ;
-    
-    */
+    const idDelete= event.target.closest("article").getAttribute("data-id");
+    const couleurDelete= event.target.closest("article").getAttribute("data-colors");
+    console.log(couleurDelete);
+    console.log(idDelete);
+
+  if(cartItemToDelete !== null){
+ 
+  }else {
+    alert("item non trouvé");
+  }
+  console.log(cartItemToDelete);
+  
+  //chercher l'élement dans LS qui a cet id et cette couleur
+  let monPanier=JSON.parse(localStorage.getItem('monPanier'));
+  let cartItemDansLS = monPanier.find (p => p.id===cartItemToDelete.idDelete && p.couleurKey===cartItemToDelete.couleurDelete);
+  
+  // si mm id et mm couleur alors supprimer
+  if (cartItemDansLS.id === cartItemToDelete.idDelete 
+      && cartItemDansLS.couleurKey === cartItemToDelete.couleurDelete) {
+        itemsPanier.splice(0,1);
+        console.log("supp ds DOM")
+        cartItemDansLS.remove();
+        console.log("supp item ds LS")
+        cartItemToDelete.removeItem();
+        console.log("supp item");
+  } ;
+  
+  */
 
 
 

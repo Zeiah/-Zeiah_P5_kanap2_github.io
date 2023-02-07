@@ -1,61 +1,3 @@
-/* essai insertion produit dans page accueil > pas de manière dynamique
-
-// Récupération des produits depuis le fichier JSON
-const reponse = await fetch('product.js');
-const produits = await reponse.js();
-
-const article = products[0];
-
-//const idElement= document.createElement("a"); idElement.href = products._id
-
-const imageUrlElement = document.createElement("img");
-imageUrlElement.src = products.imageUrl;
-
-const altTxtElement = document.createElement("alt");
-altTxtElement.innerText = products.altTxt;
-
-const nameElement = document.createElement("h3");
-nameElement.innerText= products.name;
-
-const descriptionElement = document.createElement("p");
-descriptionElement.innerText= products.description;
-
-const sectionItems = document.querySelector("#items");
-//sectionItems.appendChild(idElement);
-sectionItems.appendChild(imageUrlElement);
-sectionItems.appendChild(altTxtElement);
-sectionItems.appendChild(nameElement);
-sectionItems.appendChild(descriptionElement);
-*/
-
-//tentative affichage des produits de manière dynamique via API
-/*
-class ProductItems {
-    constructor (productImageUrl, productAltTxt, productName, productDescription) {
-        this.productImageUrl = productImageUrl;
-        this.productAltTxt = productAltTxt;
-        this.productName = productName;
-        this.productDescription=productDescription;
-    }
-}
-document.querySelector('#items'){ 
-    fetch(url)
-    .then(function(response){
-        return response.json();
-    })
-    .then(function(data){
-        console.log(data);
-        let affichage = '<section>';
-        for (let product of products){
-            let affichage = new ProductItems();
-            console.log(ProductItems);
-        }
-    });
-}*/
-
-
-
-
 //récupérer les données sur json via api : meth fetch
 const url='http://localhost:3000/api/products';
 
@@ -103,7 +45,7 @@ fetch(url)
         
         else {
             console.log("erreur de communication avec l'API");
-            alert("Problème de communication");
+            alert("Erreur de communication avec le serveur");
         }
  
     }).catch(error=>{
