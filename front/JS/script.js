@@ -2,7 +2,7 @@
 const url='http://localhost:3000/api/products';
 
 fetch(url)
-    .then(res => {
+    .then(response => {
         if (response.ok) {
             console.log(response);
             response.json() .then(data => {

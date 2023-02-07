@@ -354,8 +354,9 @@ btnCommander.addEventListener("click", async (event) => {
     let result = await response.json()
     let orderId = result.id;
     console.log(orderId);
-        // se diriger vers page order avec l'id de la commande
-       // document.location.href = `./confirmation.html?orderId=${orderId}`;
+        
+    // se diriger vers page order avec l'id de la commande
+    document.location.href = './confirmation.html?id=${orderId}';
 
         // vider le local storage et vider le pannier : localStorage.clear()
 
