@@ -3,9 +3,9 @@ const url='http://localhost:3000/api/products';
 
 fetch(url)
     .then(res => {
-        if (res.ok) {
-            console.log(res);
-            res.json() .then(data => {
+        if (response.ok) {
+            console.log(response);
+            response.json() .then(data => {
                 for (let i=0; i<data.length; i++) {
 
 /* suivant modele html, créer le lien <a>
