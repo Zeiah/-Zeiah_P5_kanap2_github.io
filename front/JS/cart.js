@@ -228,84 +228,112 @@ function toDeleteItem() {
 }
 
 
-/************ Bon de commande *********************/
+/************ FORMULAIRE *********************/
 
-//Définir les données du formulaire
-let inputFirstName = document.querySelector("#firstName");
-let inputLastName = document.querySelector("#lastName");
-let inputAddress = document.querySelector("#address");
-let inputCity = document.querySelector("#city");
-let inputEmail = document.querySelector("#email");
+// sélection du bouton commander :
+let btnCommander = document.querySelector("#order");
 
-let firstName = inputFirstName.value;
-let lastName = inputLastName.value;
-let address = inputAddress.value;
-let city = inputCity.value;
-let email = inputEmail.value;
-
-//Fonction de validation des données saisies dans les différents champs du formulaire
-let validationFirstName = function() {
-  const masqueFirstName = new RegExp(/^[A-Za-z[\s]'\-.,]{2,31}$/i);
-  if (masqueFirstName.test(firstName)) {
-    console.log("firstName ok");
-    return true;
-  } else {
-    const firstNameError = document.querySelector("#firstNameErrorMsg");
-    firstNameError.innerHTML = "Erreur dans votre nom: 2 lettres minimum";
-  }
-};
-
-let validationLastName = function() {
-  const masqueLastName = new RegExp(/^[A-Za-z[\s]'\-.,]{2,31}$/i);
-  if (masqueLastName.test(lastName)) {
-    console.log("lastName ok");
-    return true;
-  } else {
-    const lastNameError = document.querySelector("#lastNameErrorMsg");
-    lastNameError.innerHTML = "Erreur dans votre prénom: 2 lettres minimum";
-    return false;
-  }
-};
-
-let validationAddress = function() {
-  const masqueAddress = new RegExp(/^[0-9]+[\s]?(bis|ter|quarter)?[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s,'-]+$/i);
-  if (masqueAddress.test(address)) {
-    console.log("address ok");
-    return true;
-  } else {
-    const addressError = document.querySelector("#addressErrorMsg")
-    addressError.innerHTML = "Merci de vérifier votre adresse : n° + nom de la voie";
-    return false;
-  }
-};
-
-let validationCity = function() {
-  const masqueCity = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
-  if (masqueCity.test(city)) {
-    console.log("city ok");
-    return true;
-  } else {
-    const cityError = document.querySelector("#cityErrorMsg");
-    cityError.innerHTML = "Merci d'indiquer votre code postal et votre ville";
-    return false;
-  }
-};
-
-let validationEmail = function() {
-  const masqueEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
-  if (masqueEmail.test(email)) {
-    console.log("email ok")
-    return true;
-  } else {
-    const emailError = document.querySelector("#emailErrorMsg");
-    emailError.innerHTML = "Merci de renseigner un email valide (monMail123@nomdedomaine.com)";
-    return false;
-  }
-};
-
-const btnCommander = document.querySelector("#order");
-btnCommander.addEventListener("click", async (event) => {
+// écoute du bouton commander quand click
+btnCommander.addEventListener("click", (event) => {
   event.preventDefault();
+
+  //Récupérer les valeurs du formulaire dans un objet contact
+  contact = {
+    firstName: document.querySelector("#firstName").value,
+    lastName: document.querySelector("#lastName").value,
+    address: document.querySelector("#address").value,
+    city: document.querySelector("#city").value,
+    email: document.querySelector("#email").value,
+  };
+
+  //Fonctions de validation des données saisies dans les différents champs du formulaire
+
+  function validationFirstName() {
+    let firstName = contact.firstName;
+    const firstNameError = document.querySelector("#firstNameErrorMsg")
+    const inputFirstName = document.querySelector("#firstName");
+    const masqueFirstName = new RegExp(/^[a-zA-ZÀ-ÿ]{2,35}([-' ,][a-zA-ZÀ-ÿ]+)*$/i);
+    if (masqueFirstName.test(firstName)) {
+      console.log("firstName ok");
+      firstNameError.innerHTML = "";
+      inputFirstName.style.border = "2px solid green";
+      return true;
+    } else {
+      firstNameError.innerHTML = "Erreur dans votre prénom: 2 lettres minimum, aucun chiffre";
+      inputFirstName.style.border = "2px solid red";
+      return false;
+    }
+  };
+
+  function validationLastName() {
+    let lastName = contact.lastName;
+    const lastNameError = document.querySelector("#lastNameErrorMsg");
+    const inputLastName = document.querySelector("#lastName");
+    const masqueLastName = new RegExp(/^[a-zA-ZÀ-ÿ]{2,35}([-' ,][a-zA-ZÀ-ÿ]+)*$/i);
+    if (masqueLastName.test(lastName)) {
+      console.log("lastName ok");
+      lastNameError.innerHTML = "";
+      inputLastName.style.border = "2px solid green";
+      return true;
+    } else {
+      lastNameError.innerHTML = "Erreur dans votre nom: 2 lettres minimum, pas de chiffre";
+      lastName.style.border = "2px solid red";
+      return false;
+    }
+  };
+
+  function validationAddress() {
+    let address = contact.address;
+    const addressError = document.querySelector("#addressErrorMsg");
+    const inputAddress = document.querySelector("#address");
+    const masqueAddress = new RegExp(/^\d{1,3}( bis| ter| quater)? (rue|avenue|boulevard|route|chemin|impasse) [a-zA-ZÀ-ÿ]+$/i);
+    if (masqueAddress.test(address)) {
+      console.log("address ok");
+      addressError.innerHTML = "";
+      inputAddress.style.border = "2px solid green";
+      return true;
+    } else {
+      addressError.innerHTML = "Merci de vérifier votre adresse : n° + nom de la voie";
+      inputAddress.style.border = "2px solid red";
+      return false;
+    }
+  };
+
+  function validationCity() {
+    let city = contact.city;
+    const cityError = document.querySelector("#cityErrorMsg");
+    const inputCity = document.querySelector("#city");
+    const masqueCity = new RegExp(/^[0-9]{5}[\s]?[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$/);
+    if (masqueCity.test(city)) {
+      console.log("city ok");
+      cityError.innerHTML = "";
+      inputCity.style.border = "2px solid green";
+      return true;
+    } else {
+      cityError.innerHTML = "Merci d'indiquer votre code postal et votre ville";
+      inputCity.style.border = "2px solid red";
+      return false;
+    }
+  };
+
+  function validationEmail() {
+    let email = contact.email;
+    const emailError = document.querySelector("#emailErrorMsg");
+    const inputEmail = document.querySelector("#email");
+    const masqueEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/i);
+    if (masqueEmail.test(email)) {
+      console.log("email ok");
+      emailError.innerHTML = "";
+      inputEmail.style.border = "2px solid green";
+      return true;
+    } else {
+      emailError.innerHTML = "Merci de renseigner un email valide (monMail123@nomdedomaine.com)";
+      inputEmail.style.border = "2px solid red";
+      return false;
+    }
+  };
+
+  // Validation du formulaire avant envoi
   if (
     firstName === null
     || lastName === null
@@ -313,56 +341,66 @@ btnCommander.addEventListener("click", async (event) => {
     || city === null
     || email === null
   ) {
-    console.log("formulaire non rempli")
-    alert("Merci de remplir tous les champs du formulaire")
+    console.log("formulaire incomplet");
+    alert("Merci de remplir tous les champs du formulaire");
   } else if (
-    validationFirstName === false
-    || validationLastName === false
-    || validationAddress === false
-    || validationCity === false
-    || validationEmail === false
+    validationFirstName() === false
+    || validationLastName() === false
+    || validationAddress() === false
+    || validationCity() === false
+    || validationEmail() === false
   ) {
-    console.log("erreur formulaire")
-    alert("Merci de vérifier le formulaire de contact")
+    console.log("erreur formulaire");
+    alert("Merci de vérifier le formulaire de contact");
   } else {
-    console.log("formulaire ok")
+    console.log("formulaire ok");
+    postOrder()
+  }
 
-    // Construire le panier à partir du LS (quid quantite et couleur?)
-    let getIdItemsPanier = itemsPanier.map(i => i.id);
-    console.log("recup id des items du panier", getIdItemsPanier);
+  // variable qui récupére l'orderId envoyé comme réponse par le server lors de la requête POST 
+  let orderId = "";
 
-    // création de la charge utile au format JSON
-    const chargeUtile = JSON.stringify({
-      contact: {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        address: address.value,
-        city: city.value,
-        email: email.value,
-      },
-      panier: getIdItemsPanier,
-    });
+  // requête du serveur et POST des données
+  function postOrder() {
 
-    // appel de la fonction Fetch, avec les infos nécessaires
-    let response = await fetch("http://localhost:3000/api/products/order", {
+    // Créer un tableau avec les id des produits (quid quantite et couleur)
+    let products = itemsPanier.map(i => i.id);
+    console.log("recup id items du panier", products);
+
+    //Envoyer formulaire et produits du panier sur serveur avec méthode POST
+    chargeUtile = {
+      contact: contact,
+      products: products,
+    };
+
+    console.log(chargeUtile)
+    
+    fetch("http://localhost:3000/api/products/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: chargeUtile,
+      body: JSON.stringify(chargeUtile)
     })
-    let result = await response.json()
-    let orderId = result.id;
-    console.log(orderId);
-        
-    // se diriger vers page order avec l'id de la commande
-    document.location.href = './confirmation.html?id=${orderId}';
 
-        // vider le local storage et vider le pannier : localStorage.clear()
+      //stocker la réponse de l'API (orderId)
+      .then((response) => {
+        return response.json();
+      })
+      .then((server) => {
+        orderId = server.orderId;
+        console.log(orderId);
 
+        // Rediriger vers la page order si la commande a bien un orderId
+        if (orderId != "") {
+          alert("Merci pour votre commande!")
+          document.location.href = "confirmation.html?id=" + orderId;
+        }
+      })
+    // vider le local storage ?  localStorage.clear()
   }
-      });
-    
+})
+
 
 
 
