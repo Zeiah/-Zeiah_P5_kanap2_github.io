@@ -5,8 +5,12 @@ document.title = "Kanap Cart";
 function getPanier() {
   let monPanier = localStorage.getItem('monPanier');
   if (monPanier == null) {
+    document.querySelector("#totalQuantity").innerHTML = "0";
+    document.querySelector("#totalPrice").innerHTML = "0";
+    document.querySelector("h1").innerHTML =
+              "Votre panier est vide";
+    console.log("Panier vide", monPanier);
     return [];
-    //alert("votre panier est vide")
   }
   else {
     return JSON.parse(monPanier);
@@ -14,23 +18,29 @@ function getPanier() {
 }
 
 let itemsPanier = getPanier(); // créer une variable qui appelle la fonction
+console.log("items dans le panier", itemsPanier);
 
 
-/* // Appel de l'API pour l'affichage des éléments du DOM
-  // Récupérer les propriétés non enregistrées dans le localStorage */
+/****** Affichage des éléments dans le panier ******************
+ ****** Récupérer sur l'API les propriétés non enregistrées dans le localStorage ******/
 fetch("http://localhost:3000/api/products")
   .then(response => response.json())
   .then(data => {
-    console.log(data);
+    console.log("données products API", data);
 
-    document.querySelector('#cart__items').innerHTML = ""; // récupérer structure html qui va les accueillir
+    // récupérer la structure html 
+    document.querySelector('#cart__items').innerHTML = "";
     for (let i = 0; i < itemsPanier.length; i++) {
-      // variables qui récupèrent 3 données de chaque item ds localStorage (id, quantite, couleur)
+      // variables qui récupèrent ds LS les id, quantite, couleur pr chaque objet
       let id = itemsPanier[i].id;
       let quantite = itemsPanier[i].quantite;
       let couleur = itemsPanier[i].couleur;
-      let item = data.find(p => id === p._id); // id item ds LS doit correspondre à id item ds json
-      console.log("1", item);
+      
+      // id de l'item ds LS doit correspondre à l'id de l'item ds API
+      // récupérer dans l'API les données non enregistrées ds LS 
+      // affichage des éléments du panier
+      let item = data.find(p => id === p._id);
+      console.log("affichage item ds panier", item);
 
       // ajout article "cart__item"
       const article = document.createElement("article");
@@ -112,8 +122,7 @@ fetch("http://localhost:3000/api/products")
   });
 
 
-//calcul "totalQuantity" et "totalPrice"
-
+/********* calcul "totalQuantity" et "totalPrice"*********/
 function getTotal() {
   fetch("http://localhost:3000/api/products")
     .then(response => response.json())
@@ -154,29 +163,34 @@ function getTotal() {
 function toModifyQuantity() {
   let itemsPanier = getPanier();
 
-  // viser input de la quantite
-  let modifQuantity = document.querySelectorAll(".itemQuantity");
-
-  for (let i = 0; i < modifQuantity.length; i++) {
-    modifQuantity[i].addEventListener("change", () => {
+  // viser l'input de la quantite, écouter les changements
+  let inputQuantiteModifiee = document.querySelectorAll(".itemQuantity");
+  
+  for (let i = 0; i < inputQuantiteModifiee.length; i++) {
+    inputQuantiteModifiee[i].addEventListener("change", () => {
       let oldQuantite = itemsPanier[i].quantite;
       console.log("old quantité:", oldQuantite);
-      let newQuantite = modifQuantity[i].value;
+      let newQuantite = inputQuantiteModifiee[i].value;
       console.log("new quantite:", newQuantite);
 
       if (newQuantite > 100) {
         alert("Vous ne pouvez pas commander plus de 100 canapés pour chaque couleur");
-      } else {
-        //vérifier si la newQuantite est différente de la oldQuantite 
-        const verifQuantite = itemsPanier.find((item) => item.newQuantite !== oldQuantite);
-        verifQuantite.quantite = newQuantite;
-        itemsPanier[i].quantite = verifQuantite.quantite;
+      } 
+      // else if (newQuantite === 0){alert("La quantité est d'au moins un article, veuillez le supprimer");}
+      else {
+        //Identifier l'item avec modification de la quantité 
+        let itemAvecModif = itemsPanier.find((item) => item.newQuantite !== oldQuantite);
+        console.log("item avec old quantité :", itemAvecModif);
+        // Déclarer que la quantité de cet item correspond à la nvlle quantité
+        itemAvecModif.quantite = newQuantite;
+        console.log("item avec new quantité :", itemAvecModif);
+        
+        //itemsPanier[i].quantite = itemAvecModif.quantite;
 
-        //enregistrer le nouveau panier dans le localStorage
-        localStorage.setItem("monPanier", JSON.stringify(itemsPanier))
+        //enregistrer le nouveau panier (avec la quantité modifiée) dans le localStorage
+        localStorage.setItem("monPanier", JSON.stringify(itemsPanier));
         alert("La quantité a été modifiée");
       }
-
       return location.reload()
     })
   }
@@ -191,8 +205,44 @@ function toModifyQuantity() {
  * Enregistrer le nouveau panier dans LS
  * Rafraichir la page */
 
-//Fonction supression, supprime un article dynamiquement du panier et de l'affichage
 function toDeleteItem() {
+  let itemsPanier = getPanier();
+
+  const btnDeleteItem = document.querySelectorAll(".deleteItem");
+  
+  for (let i = 0; i < btnDeleteItem.length; i++){
+    btnDeleteItem[i].addEventListener("click", (event) => {
+      let cartItemToDelete = event.target.closest(".cart__item ");
+      console.log("item à supprimer:", cartItemToDelete)
+      
+      let idCartItemToDelete = cartItemToDelete.dataset.id;
+      console.log("id item to delete:", idCartItemToDelete);
+
+      let couleurCartItemToDelete = cartItemToDelete.dataset.color;
+      console.log("couleur item to delete:", couleurCartItemToDelete); 
+      
+      itemsPanier = itemsPanier.filter( p => 
+        p.id === idCartItemToDelete
+        && p.couleur != couleurCartItemToDelete)
+      
+        // let itemsPanier = cartItemToDelete.splice(0,1)
+        //let itemsPanier = itemsPanier.splice(cartItemToDelete,1)
+        
+        //localStorage.removeItem(cartItemToDelete)
+        console.log("panier avec suppression article:", itemsPanier)
+        localStorage.setItem("monPanier", JSON.stringify(itemsPanier))
+
+        alert("Votre article a été supprimé");
+        return location.reload();
+      })
+  }
+}
+
+
+      
+  
+
+/*function toDeleteItem() {
   const cartdelete = document.querySelectorAll(".cart__item .deleteItem");
   //pour chaque élément cartdelete
   cartdelete.forEach((cartdelete) => {
@@ -226,7 +276,7 @@ function toDeleteItem() {
         }
     });
   });
-}
+}*/
 
 
 /************ FORMULAIRE *********************/
@@ -401,45 +451,6 @@ btnCommander.addEventListener("click", (event) => {
     // vider le local storage ?  localStorage.clear()
   }
 })
-
-
-
-
-
-/*
-// ******************* formulaire **********************
- const form = document.querySelector(".cart__order__form");
- let firstName = document.querySelector("#firstName").value;
- let lastName = document.querySelector("#lastName").value;
- let address = document.querySelector("#address").value;
- let city = document.querySelector("#city").value;
- let email = document.querySelector("#email").value;
-
- let firstNameError = document.querySelector(".firstNameErrorMsg");
- let lastNameError = document.querySelector(".lastNameErrorMsg");
- let addressError = document.querySelector(".addressErrorMsg");
- let cityError = document.querySelector(".cityErrorMsg");
- let emailError = document.querySelector(".emailErrorMsg");
-
- //***************** commander***********
-
- 
-
-    //Création de l'objet Cart Order
-    /* = {
-      form : {
-        // comme form.submit() plus haut >> form: form
-        // formData.append(name, value)?
-        // firstName: form.firstName
-        firstName: event.target.querySelector("[name-firstName]").value,
-        lastName: event.target.querySelector("[name-lastName]").value,
-        address: event.target.querySelector("[name-address]").value,
-        city: event.target.querySelector("[name-city]").value,
-        email: event.target.querySelector("[name-email]").value,
-      },
-      monPanier : {itemsPanier},
-
-    };*/
 
 
 
