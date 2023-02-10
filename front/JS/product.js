@@ -1,143 +1,145 @@
-/*pour indiquer la localisation, la page où on se trouve >> 
-pour récupérer href et les données */
-const str=window.location.href;
+//indiquer la localisation, la page où on se trouve
+const localisation = window.location.href;
 
-//instancier un nvl objet URL(window.location.href)
-const url = new URL(str);
-console.log(url);
+//créer un nvl objet URL(window.location.href)
+const url = new URL(localisation);
+console.log("url de la page:", url);
 
-//chercher l'id ds le lien url (après le ?)
+//chercher l'id du produit ds le lien url (paramètre id après le ?)
 let urlId = url.searchParams.get("id");
-console.log(urlId);
+console.log("id du produit:", urlId);
 
-//poser le lien pour chaque produit
-let urlProduct='http://localhost:3000/api/products/'+ urlId;
-console.log(urlProduct);
+//récupérer sur l'API les datas du produit à partir de son id + 
+let urlProduct = 'http://localhost:3000/api/products/' + urlId;
+console.log("url api avec id du produit:", urlProduct);
 
 fetch(urlProduct)
-    .then(res => {
-        if (res.ok) {
-            console.log(res);
-            res.json() .then(data => {
-                let image = document.createElement("img");
-                document.querySelector('.item__img').appendChild(image);
-                image.src=data.imageUrl;
-                document.querySelector('#title').textContent=data.name;
-                document.querySelector('#price').textContent=data.price;
-                document.querySelector('#description').textContent=data.description;
-                
-                //pour les valeurs couleur dans tableau colors
-                let couleur=document.querySelector('#colors');
-                for (let i=0; i<data.colors.length; i++){
-                    couleur.innerHTML+=`<option value="${data.colors[i]}">${data.colors[i]}</option>`;       
-                }   // reprendre : celui qui est entre les deux balises est ce que voit l'utilisateur
-                    // nous, on récupère la 1ere
-                console.log(data)
+    .then(Response => {
+        if (Response.ok) {
+            console.log(Response);
+            Response.json().then(data => {
 
                 //nommer la page avec le nom du produit
                 document.title = data.name;
+                console.log("nom de la page:", data.name)
+
+                // affichage des propriétés de l'élément du DOM suivant le modèle html
+                let image = document.createElement("img");
+                document.querySelector('.item__img').appendChild(image);
+                image.src = data.imageUrl;
+                image.alt = data.altTxt;
+                document.querySelector('#title').textContent = data.name;
+                document.querySelector('#price').textContent = data.price;
+                document.querySelector('#description').textContent = data.description;
+
+                //boucle pour affichage des valeurs couleur disponibles de l'option couleur
+                let couleur = document.querySelector('#colors');
+                for (let i = 0; i < data.colors.length; i++) {
+                    // Les variables entre la balise <option> seront celles visibles par l'utilisateur
+                    couleur.innerHTML += `<option value="${data.colors[i]}">${data.colors[i]}</option>`;
+                }
+                console.log("couleurs disponibles:", data.colors);
             })
         }
         else {
             console.log("erreur de communication avec l'API");
-            alert("problème de communication");
+            alert("problème de communication avec le serveur");
         }
- 
-    }).catch(error=>{
-            console.log("récupération de l'erreur", error)
+
+    }).catch(error => {
+        console.log("récupération de l'erreur:", error);
     });
 
-    /*fonction bouton: événement (click) pour ajouter sélection ds le pannier 
-    >> condition : indiquer quantité et couleur*/
-    const btnAddSelectionItem = document.querySelector("#addToCart");
-    btnAddSelectionItem.addEventListener("click", function() {
-        
-        let quantite = parseInt(document.querySelector("#quantity").value);
-        // parseInt: Analyser un chaine de caractères fournie en argument, ce qui est récupéré est un nbre entier
-        //récupérer un nombre de item (le nombre doit être un entier)
+/***** ajouter un produit dans le panier (id, couleur, quantite) ************/
 
-        let couleur = document.querySelector("#colors").value;
-        
-        //créer un objet (la selection) avec 3 propriétés, décrites par 3 paires de clef/valeur 
-        let selectionItem = {
-            id: urlId,
-            quantiteKey: quantite,
-            couleurKey: couleur
-        }
-        console.log(selectionItem); //dans console: retourner un objet, la selection
-        
-        // la quantite doit etre inférieure ou égale à 100
-        if(quantite<=100) {
-            addSelectionItem(selectionItem);// instruction de prendre ici methode définie et utilisée plus bas
-            console.log("nombre d'items:" + typeof quantite); // afficher le type number de la variable quantite
-        } 
-        
-        else {
-            alert("Vous ne pouvez pas choisir plus de 100 items pour chaque canapé");
-            //console.log("nombre d'items supérieur à 100");
-        };
-    })
+//sélectionner le bouton qui activera l'événement "addToCart" au click
+const btnAddToCart = document.querySelector("#addToCart");
+btnAddToCart.addEventListener("click", function () {
 
+    // récupérer le nombre (qui doit être un entier) sélectionné
+    let quantite = parseInt(document.querySelector("#quantity").value);
+    console.log("nbre item:", quantite);
 
-    //fonction qui sélectionne au moins 1 item, avec une couleur définie, afin de l'ajouter dans le panier 
-    function addSelectionItem(selectionItem) {
-        if (selectionItem.quantiteKey ===0 || selectionItem.couleurKey ==="") {
-            alert("Veuillez choisir une couleur et un nombre d'articles");
-            console.log("quantité :", selectionItem.quantiteKey);
-            console.log("couleur non spécifiée", selectionItem.couleurKey)
-            console.log("1");
-        }
-        else {
-            console.log("2")
-            let monPanier=JSON.parse(localStorage.getItem('monPanier')); 
-            // récupérer ce qui a déjà été sélectionné dans le panier (localStorage) - les éléments du tableau monPanier                
-            
-            if (monPanier===null){
-                monPanier=[];
-                console.log("3")
-            };
-            //si le panier est vide, instancier un tableau pr ajouter la sélection telle quelle 
+    //récupérer la couleur sélectionnée
+    let couleur = document.querySelector("#colors").value;
+    console.log("couleur:", couleur);
 
-            let _selectionItem = monPanier.find (p => p.id===selectionItem.id && p.couleurKey===selectionItem.couleurKey);
-            // le tiret devant la variable est destiné à un usage interne à la fonction ou à la classe
-            // retrouver dans le panier un élément p qui a la mm id et la mm couleur que sélection
-            // cet élément antérieur = _selectionItem?
-            //ici comparaison des key MAIS ce sont des valeurs qui sont stockées ds un array
-            
-            // s'il y a un panier = variable _selectionItem = vrai
-            if (_selectionItem) {
-                console.log("4")
-               let totalQuantite = (selectionItem.quantiteKey + _selectionItem.quantiteKey);
-               console.log("5")
-            //si selection antérieure de mm produit avec mm couleur, alors lui ajouter nouvelle selection (addition) 
-            // MAIS la quantité ne doit pas dépasser 100, on la réajuste à 100 
-            //ici addition par les key
-                
-                if (totalQuantite > 100) {
-                    console.log("6")
-                    _selectionItem.quantiteKey === _selectionItem.quantiteKey ;
-                    alert("Commande limitée à 100 articles pour chaque couleur, merci de vérifier votre panier et d'ajuster le nombre d'articles")
-                    console.log("7")
-                }
-                else {
-                    console.log("8")
-                    _selectionItem.quantiteKey += selectionItem.quantiteKey;
-                    console.log("9");
-                    alert("La quantité a été modifiée");
-                }
-            }
-            // si la quantité ne dépasse pas 100 items, alors ajouter la selection au panier
-            else {
-                console.log("10")
-                monPanier.push (selectionItem);
-                alert("Produit ajouté au panier");
-                //console.log("produit ajouté dans panier");
-            }
-
-            // stocker le (nvx) panier dans le localStorage
-        localStorage.setItem("monPanier", JSON.stringify(monPanier));
-        console.log("envoi panier dans localStorage");
-
-        } 
-
+    //créer un objet avec 3 propriétés (id, quantité, couleur) 
+    let selectionItem = {
+        id: urlId,
+        quantite: quantite,
+        couleur: couleur,
     };
+    console.log(selectionItem);
+
+    //Pour ajouter au panier, la quantité doit être inférieure ou égale à 100
+    if (quantite <= 100) {
+        //// si quantité ok, appel de la fonction qui t l'item dans le localStorage
+        addLocalStorage(selectionItem);
+        // afficher le type de la variable (qui doit être "number") + la quantité sélectionnée
+        console.log("nbre d'items sélectionnés:", quantite + " type:", typeof quantite);     
+    } else {
+        console.log("refus ajout car nbre items > 100");
+        alert("Vous ne pouvez pas choisir plus de 100 items pour chaque canapé");
+    };
+})
+
+/**** fonction d'ajout au localStorage******/  
+function addLocalStorage(selectionItem) {
+    //condition : avoir sélectionné une couleur ET une quantité
+    if (selectionItem.quantite === 0 || selectionItem.couleur === "") {
+        alert("Veuillez choisir une couleur et un nombre d'articles");
+        console.log("quantité:", selectionItem.quantite);
+        console.log("couleur:", selectionItem.couleur);
+        console.log("refus ajout car quantité ou couleur non renseignée");
+    }
+    else {
+        console.log("couleur et quantité renseignées")
+        // si couleur et quantité renseignées, vérifier si cela est compatible avec panier existant
+       
+        // récupérer le tableau monPanier (comportant les items ajoutés) dans le localStorage
+        let monPanier = JSON.parse(localStorage.getItem('monPanier'));
+        
+        //si panier vide, créer un tableau pr ajouter l'item 
+        if (monPanier === null) {
+            monPanier = [];
+            console.log("Le panier est vide:", monPanier);
+        };
+
+        // si panier non vide, voir si on peut trouver un item avec mm id et mm couleur que l'item à ajouter
+        // nommer dans une variable cet item retrouvé = _selectionItem
+        let _selectionItem = monPanier.find(item => 
+            item.id === selectionItem.id 
+            && item.couleur === selectionItem.couleur
+        );
+
+        // s'il y a un item avec mm id et mm couleur = additionner les quantités
+        if (_selectionItem) {
+            console.log("item déjà dans le panier:", _selectionItem)
+            let totalQuantite = (selectionItem.quantite + _selectionItem.quantite);
+            console.log("quantité totale:", totalQuantite);
+            
+            // Condition : la quantité totale ne doit pas être >100, sinon on bloque la commande
+            if (totalQuantite > 100) {
+                console.log("quantité totale >100");
+                _selectionItem.quantite === _selectionItem.quantite;
+                alert("Commande limitée à 100 articles pour chaque couleur, merci de vérifier votre panier et d'ajuster le nombre d'articles");
+                console.log("refus ajout");
+            } else {
+                console.log("quantité totale <100, nvlle quantité ajoutée");
+                _selectionItem.quantite += selectionItem.quantite;
+                alert("La quantité a été modifiée");
+            }
+        }
+        // si pas d'item ds le panier avec mm id et mm couleur alors ajouter la selection ds LS
+        else {
+            console.log("pas d'item avec mm id et mm couleur ds le panier, produit ajouté")
+            monPanier.push(selectionItem);
+            alert("Produit ajouté au panier");
+        }
+
+        // stocker le (nvx) panier dans le localStorage
+        localStorage.setItem("monPanier", JSON.stringify(monPanier));
+        console.log("envoi (nvx) panier dans localStorage");
+    }
+};

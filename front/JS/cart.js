@@ -1,7 +1,7 @@
 // nommer la page 
-document.title = "Kanap Mon panier";
+document.title = "Kanap Cart";
 
-// récupérer dans le localStorage les éléments sélectionnés et ajoutés au panier
+// récupérer dans le localStorage les éléments ajoutés au panier
 function getPanier() {
   let monPanier = localStorage.getItem('monPanier');
   if (monPanier == null) {
@@ -27,8 +27,8 @@ fetch("http://localhost:3000/api/products")
     for (let i = 0; i < itemsPanier.length; i++) {
       // variables qui récupèrent 3 données de chaque item ds localStorage (id, quantite, couleur)
       let id = itemsPanier[i].id;
-      let quantite = itemsPanier[i].quantiteKey;
-      let couleur = itemsPanier[i].couleurKey;
+      let quantite = itemsPanier[i].quantite;
+      let couleur = itemsPanier[i].couleur;
       let item = data.find(p => id === p._id); // id item ds LS doit correspondre à id item ds json
       console.log("1", item);
 
@@ -127,7 +127,7 @@ function getTotal() {
         let id = itemsPanier[i].id;
         let item = data.find(p => id === p._id);
 
-        let quantite = itemsPanier[i].quantiteKey;
+        let quantite = itemsPanier[i].quantite;
         console.log("Quantite item: ", quantite)
         let prix = item.price;
         console.log("Prix item:", prix)
@@ -152,24 +152,25 @@ function getTotal() {
 //************* modifier quantité d'un item ********************
 
 function toModifyQuantity() {
-  let itemsPanier = getPanier()
+  let itemsPanier = getPanier();
 
-  let modifQuantity = document.querySelectorAll(".itemQuantity");// viser input de la quantite
+  // viser input de la quantite
+  let modifQuantity = document.querySelectorAll(".itemQuantity");
 
   for (let i = 0; i < modifQuantity.length; i++) {
     modifQuantity[i].addEventListener("change", () => {
-      let oldQuantite = itemsPanier[i].quantiteKey;
-      console.log("1 old quantite", oldQuantite);
+      let oldQuantite = itemsPanier[i].quantite;
+      console.log("old quantité:", oldQuantite);
       let newQuantite = modifQuantity[i].value;
-      console.log("2 new quantite", newQuantite);
+      console.log("new quantite:", newQuantite);
 
       if (newQuantite > 100) {
         alert("Vous ne pouvez pas commander plus de 100 canapés pour chaque couleur");
       } else {
         //vérifier si la newQuantite est différente de la oldQuantite 
         const verifQuantite = itemsPanier.find((item) => item.newQuantite !== oldQuantite);
-        verifQuantite.quantiteKey = newQuantite;
-        itemsPanier[i].quantiteKey = verifQuantite.quantiteKey;
+        verifQuantite.quantite = newQuantite;
+        itemsPanier[i].quantite = verifQuantite.quantite;
 
         //enregistrer le nouveau panier dans le localStorage
         localStorage.setItem("monPanier", JSON.stringify(itemsPanier))
@@ -491,7 +492,7 @@ for (let bouton of Array.from(boutons)) {
     console.log("4 debut event");
     let cartItemToDelete = event.target.closest("article");
     console.log("5 article to delete", cartItemToDelete);
-    let monPanier = itemsPanier.filter(p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
+    let monPanier = itemsPanier.filter(p => p.id !== cartItemToDelete.dataset.id || p.couleur !== cartItemToDelete.dataset.couleur
       ); // newItemsPanier >> monPanier (comme sur la page product)
     console.log("6 filtrer nouveau panier");
 
@@ -523,7 +524,7 @@ for (let i = 0; i < boutons.length; i++) {
       let cartItemToDelete = boutons[i].closest("article");
       console.log("5 article to delete", cartItemToDelete);
       itemsPanier = itemsPanier.filter(
-        p => p.id !== cartItemToDelete.dataset.id || p.couleurKey !== cartItemToDelete.dataset.couleur
+        p => p.id !== cartItemToDelete.dataset.id || p.couleur !== cartItemToDelete.dataset.couleur
       );
       localStorage.setItem("itemsPanier", JSON.stringify(itemsPanier));
 
@@ -558,7 +559,7 @@ function toDeleteItem() {
       const colorCartItemToDelete= event.target.closest("article").getAttribute("data-color");
       console.log("identifier article 6.3", colorCartItemToDelete);
       const rechercheCartItemToDelete = monPanier.find(
-        (p) => p.id===idCartItemToDelete && p.couleurKey===colorCartItemToDelete
+        (p) => p.id===idCartItemToDelete && p.couleur===colorCartItemToDelete
       );
       monPanier = monPanier.filter(
         (p) => p !== rechercheCartItemToDelete
@@ -596,11 +597,11 @@ for (let i=0; i<boutons; i++){
   
   //chercher l'élement dans LS qui a cet id et cette couleur
   let monPanier=JSON.parse(localStorage.getItem('monPanier'));
-  let cartItemDansLS = monPanier.find (p => p.id===cartItemToDelete.idDelete && p.couleurKey===cartItemToDelete.couleurDelete);
+  let cartItemDansLS = monPanier.find (p => p.id===cartItemToDelete.idDelete && p.couleur===cartItemToDelete.couleurDelete);
   
   // si mm id et mm couleur alors supprimer
   if (cartItemDansLS.id === cartItemToDelete.idDelete 
-      && cartItemDansLS.couleurKey === cartItemToDelete.couleurDelete) {
+      && cartItemDansLS.couleur === cartItemToDelete.couleurDelete) {
         itemsPanier.splice(0,1);
         console.log("supp ds DOM")
         cartItemDansLS.remove();

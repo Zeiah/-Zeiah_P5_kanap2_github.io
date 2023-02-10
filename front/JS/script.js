@@ -1,4 +1,4 @@
-//récupérer les données sur json via api : meth fetch
+//récupérer les datas sur products.json via l'API : méthode fetch
 const url='http://localhost:3000/api/products';
 
 fetch(url)
@@ -6,25 +6,20 @@ fetch(url)
         if (response.ok) {
             console.log(response);
             response.json() .then(data => {
+                
+/* *** Boucle qui insère les éléments du DOM suivant le modèle du code source html *****/
                 for (let i=0; i<data.length; i++) {
 
-/* suivant modele html, créer le lien <a>
-        <a href="./product.html?id=42">
-            <article>
-              <img src=".../product01.jpg" alt="Lorem ipsum dolor sit amet, Kanap name1">
-              <h3 class="productName">Kanap name1</h3>
-              <p class="productDescription">Dis enim malesuada risus sapien gravida nulla nisl arcu. Dis enim malesuada risus sapien gravida nulla nisl arcu.</p>
-            </article>
-        </a> -->*/
+                //créer le lien <a> en utilisant l'id de chaque produit 
                     let lien = document.createElement("a");
                     document.querySelector('#items').appendChild(lien);
                     lien.href=`./product.html?id=${data[i]._id}`
                     
-                    //créer l'enfant article, le relier au parent lien
+                //créer l'enfant <article>, le relier au parent <lien>
                     let article = document.createElement("article");
                     lien.appendChild(article);
 
-                    // créer les enfants de article - les relier au parent article
+                // créer les enfants de <article>
                     const img = document.createElement("img");
                     article.appendChild(img);
                     img.src=data[i].imageUrl;
@@ -41,15 +36,13 @@ fetch(url)
                     description.textContent = data[i].description;
                 }
             })
-        }
-        
-        else {
+        } else {
             console.log("erreur de communication avec l'API");
             alert("Erreur de communication avec le serveur");
         }
  
     }).catch(error=>{
-            console.log("récupération de l'erreur", error)
+            console.log("Récupération de l'erreur:", error);
     })
 
 
