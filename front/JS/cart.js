@@ -22,33 +22,27 @@ console.log("items dans le panier", itemsPanier);
   }
     
 
-/****** Affichage des éléments du panier ******************
- ****** Récupérer sur l'API les propriétés non enregistrées dans le localStorage ******/
+/****** AFFICHAGE DES ELEMENTS DU PANIER ******************
+ * Récupérer sur l'API les propriétés non enregistrées dans le localStorage 
+ * 
+ * ******/
 fetch("http://localhost:3000/api/products")
   .then(response => response.json())
   .then(data => {
     console.log("données products API", data);
     document.querySelector('#cart__items').innerHTML = "";
     for (let i = 0; i < itemsPanier.length; i++) {
-      // variables qui récupèrent ds LS les id, quantite, couleur pr chaque objet
       let id = itemsPanier[i].id;
       let quantite = itemsPanier[i].quantite;
       let couleur = itemsPanier[i].couleur;
-      
-      // id de l'item ds LS doit correspondre à l'id de l'item ds API
-      // récupérer dans l'API les données non enregistrées ds LS 
-      // affichage des éléments du panier
       let item = data.find(p => id === p._id);
-      console.log("affichage item ds panier", item);
 
       const article = document.createElement("article");
       document.querySelector('#cart__items').appendChild(article);
       article.className = "cart__item";
-      //attribuer à élément <article> id et couleur
       article.setAttribute("data-id", id);
       article.setAttribute("data-color", couleur);
 
-      // ajout div "cart__item_img"
       const cartItemImg = document.createElement("div");
       article.appendChild(cartItemImg);
       cartItemImg.className = "cart__item__img";
@@ -58,12 +52,10 @@ fetch("http://localhost:3000/api/products")
       imageCartItemImg.src = item.imageUrl;
       imageCartItemImg.alt = item.altTxt;
 
-      // ajout div "cart__item__content"
       const contentCartItem = document.createElement("div");
       article.appendChild(contentCartItem);
       contentCartItem.className = "cart__item__content";
 
-      //ajout div "cart__item__content__description"
       const descriptionContentCartItem = document.createElement("div");
       contentCartItem.appendChild(descriptionContentCartItem);
       descriptionContentCartItem.className = "cart__item__content__description";
@@ -80,18 +72,15 @@ fetch("http://localhost:3000/api/products")
       descriptionContentCartItem.appendChild(prixDescription);
       prixDescription.textContent = "Prix: " + item.price;
 
-      //ajout div "cart__item__content__settings"
       const settingsContentCartItem = document.createElement("div");
       contentCartItem.appendChild(settingsContentCartItem);
       settingsContentCartItem.className = "cart__item__content__settings";
 
-      //ajout settings : quantite
       const quantiteSettings = document.createElement("p");
       settingsContentCartItem.appendChild(quantiteSettings);
       quantiteSettings.className = "cart__item__content__settings__quantity";
       quantiteSettings.textContent = "Qté: " + quantite;
 
-      // ajout choix de la quantite Input
       const choixQuantiteSettings = document.createElement("input");
       settingsContentCartItem.appendChild(choixQuantiteSettings);
       choixQuantiteSettings.className = "itemQuantity";
@@ -101,7 +90,6 @@ fetch("http://localhost:3000/api/products")
       choixQuantiteSettings.setAttribute("min", "1");
       choixQuantiteSettings.setAttribute("max", "100");
 
-      //Ajout setting : supprimer
       const supprimerSettings = document.createElement("div");
       settingsContentCartItem.appendChild(supprimerSettings);
       supprimerSettings.className = "cart__item__content__settings__delete";
@@ -116,74 +104,65 @@ fetch("http://localhost:3000/api/products")
     toDeleteItem();
 
   }).catch(error => {
-    console.log("récupération de l'erreur", error);
+    console.log("récupération de l'erreur:", error);
   });
 
 
-/********* calcul "totalQuantity" et "totalPrice"*********/
+/******************** FONCTION DE CALCUL QUANTITE TOTAL ET PRIX TOTAL ********************/
 function getTotal() {
   fetch("http://localhost:3000/api/products")
     .then(response => response.json())
     .then(data => {
-
       let quantiteTotal = 0;
       let prixTotal = 0;
       let prixTotalParItem = 0;
-
       for (let i = 0; i < itemsPanier.length; i++) {
         let id = itemsPanier[i].id;
         let item = data.find(p => id === p._id);
-
         let quantite = itemsPanier[i].quantite;
         console.log("Quantite item: ", quantite)
         let prix = item.price;
         console.log("Prix item:", prix)
         prixTotalParItem = quantite * prix;
         console.log("Prix total item:", prixTotalParItem)
-
         quantiteTotal += parseInt(quantite);
         console.log("Quantité totale:", quantiteTotal);
-
         prixTotal += quantite * prix;
         console.log("Prix total:", prixTotal);
       }
       document.querySelector('#totalQuantity').innerHTML = quantiteTotal;
       document.querySelector('#totalPrice').innerHTML = prixTotal;
-
     }).catch(error => {
-      console.log("récupération de l'erreur", error);
+      console.log("récupération de l'erreur:", error);
     });
 }
 
 
-//************* modifier quantité d'un item ********************
+/************* FONCTION DE MODIFICATION DE LA QUANTITE ******************
+* créer un événement au changement sur l'input quantité
+* identifier l'article à modifier dans le LS
+* modifier sa quantité
+* renvoyer la panier modifié dans le LS et rafraîchir la page
+*************************************************************************/
 
 function toModifyQuantity() {
   let itemsPanier = getPanier();
-
-  // viser l'input de la quantite, écouter les changements
   let inputQuantiteModifiee = document.querySelectorAll(".itemQuantity");
-  
   for (let i = 0; i < inputQuantiteModifiee.length; i++) {
     inputQuantiteModifiee[i].addEventListener("change", () => {
       let oldQuantite = itemsPanier[i].quantite;
       console.log("old quantité:", oldQuantite);
       let newQuantite = inputQuantiteModifiee[i].value;
       console.log("new quantite:", newQuantite);
-
       if (newQuantite > 100) {
-        alert("Vous ne pouvez pas commander plus de 100 canapés pour chaque couleur");
+        alert("Vous ne pouvez pas commander plus de 100 articles pour chaque couleur");
       } else if (newQuantite <= 0){
-        alert("La quantité doit être d'au moins un article, merci de supprimer cet article si vous ne souhaitez plus cet article");
+        alert("La quantité doit être d'au moins un article, merci de supprimer cet article");
       } else {
-        //Identifier l'item avec modification de la quantité 
         let itemAvecModif = itemsPanier.find((item) => item.newQuantite !== oldQuantite);
         console.log("item avec old quantité :", itemAvecModif);
-        // Déclarer que la quantité de cet item correspond à la nvlle quantité
         itemAvecModif.quantite = newQuantite;
         console.log("item avec new quantité :", itemAvecModif);
-        
-        //enregistrer le nouveau panier (avec la quantité modifiée) dans le localStorage
         localStorage.setItem("monPanier", JSON.stringify(itemsPanier));
         alert("La quantité a été modifiée");
       }
@@ -193,12 +172,11 @@ function toModifyQuantity() {
 };
 
 
-/************* SUPPRIMER UN ARTICLE ******************************
+/************* SUPPRIMER UN ARTICLE *****************************************
  * Déclencher un événement au click du bouton supprimer
  * Identifier l'élément à supprimer dans le panier du LS
- * Renvoyer le panier dans le LS sans cet élément
- * Rafraichir la page 
- * *************************************************************/
+ * Renvoyer le panier dans le LS sans cet élément et rafraîchir la page 
+ * **************************************************************************/
 
 function toDeleteItem() {
   let itemsPanier = getPanier();
